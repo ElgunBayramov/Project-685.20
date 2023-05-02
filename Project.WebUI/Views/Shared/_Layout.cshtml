@@ -1,36 +1,39 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" type="image/png" href="https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png" />
-	<link rel="stylesheet" type="text/css" href="~/vendor/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="~/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="~/vendor/animate/animate.css">
-	<link rel="stylesheet" type="text/css" href="~/vendor/css-hamburgers/hamburgers.min.css">
-	<link rel="stylesheet" type="text/css" href="~/vendor/select2/select2.min.css">
-	<link rel="stylesheet" type="text/css" href="~/css/util.css">
-	<link rel="stylesheet" type="text/css" href="~/css/main.css">
-	<title>Project-685.20</title>
-	<style>
-		body{
-			overflow:hidden;
-		}
-	</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="icon" type="image/png" href="https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png" />
+	<title>Layihə-685.20</title>
 </head>
 <body>
-	@RenderBody()
-	<script src="~/vendor/jquery/jquery-3.2.1.min.js"></script>
-	<script src="~/vendor/bootstrap/js/popper.js"></script>
-	<script src="~/vendor/bootstrap/js/bootstrap.min.js"></script>
-	<script src="~/vendor/select2/select2.min.js"></script>
-	<script src="~/vendor/tilt/tilt.jquery.min.js"></script>
-	<script>
-		$('.js-tilt').tilt({
-			scale: 1.1
-		})
-	</script>
-	<script src="~/js/main.js"></script>
+<header>
+    <div class="user">
+        <img src="~/images/pic.jpg" alt="">
+    </div>
+
+    <nav class="navbar">
+        <ul>
+            <li><a asp-action="index">Şəxsi Məlumat</a></li>
+            <li><a asp-action="about">about</a></li>
+        </ul>
+    </nav>
+
+</header>
+@RenderBody()
+<div class="theme-toggler">
+    <span class="picture"></span>
+    <span style="background:linear-gradient(rgb(103, 103, 158),rgb(1, 1, 8));"></span>
+    <span style="background:linear-gradient(#145A32,#097660 )"></span>
+    <span style="background:linear-gradient(rgb(44, 165, 165),rgb(141, 125, 125) );"></span>
+    <span style="background:linear-gradient(-135deg, #c850c0, #4158d0)"></span>
+    <span style="background:linear-gradient(#999, #111)"></span>
+</div>
+    
+<!-- type.js cdn link  -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.11/typed.min.js"></script>
+<script src="~/js/script.js"></script>
 </body>
 </html>
-

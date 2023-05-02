@@ -1,4 +1,4 @@
-(function ($) {
+﻿(function ($) {
     "use strict";
     var input = $('.validate-input .input100');
 
@@ -50,3 +50,9 @@
     
 
 })(jQuery);
+var titles = ["685.20", "Qapıda təqdimatların verilməsi", "Saytımıza xoş gəlmisiniz!"];
+var counter = 0;
+setInterval(function () {
+    document.title = titles[counter % titles.length];
+    counter++;
+}, 2000);

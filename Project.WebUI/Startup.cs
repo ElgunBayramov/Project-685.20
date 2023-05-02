@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Project.WebUI.Models.DataContexts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +27,10 @@ namespace Project.WebUI
             services.AddRouting(cfg =>
             {
                 cfg.LowercaseUrls = true;
+            });
+            services.AddDbContext<ProjectDbContext>(cfg =>
+            {
+                cfg.UseSqlServer(configuration.GetConnectionString("projectCString"));
             });
         }
 

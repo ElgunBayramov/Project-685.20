@@ -9,6 +9,11 @@ namespace Project.WebUI.Controllers
         {
             return View();
         }
+        [Route("/about")]
+        public IActionResult About()
+        {
+            return View();
+        }
 
     }
 }
