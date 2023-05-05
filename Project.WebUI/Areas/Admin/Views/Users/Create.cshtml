@@ -63,6 +63,48 @@
                     </div>
                 </div>
                 <div class="form-group row">
+                    <label class="col-sm-2 col-form-label" asp-for="Surname">
+                    </label>
+                    <div class="col-sm-10">
+                        <input class="form-control" asp-for="Surname">
+                        <span asp-validation-for="Surname" class="text-danger"></span>
+                    </div>
+                </div>
+                 <div class="form-group row">
+                    <label class="col-sm-2 col-form-label" asp-for="FinCode">
+                    </label>
+                    <div class="col-sm-10">
+                        <input class="form-control" asp-for="FinCode">
+                        <span asp-validation-for="FinCode" class="text-danger"></span>
+                    </div>
+                </div>
+                 <div class="form-group row">
+                    <label class="col-sm-2 col-form-label" asp-for="UserName">
+                    </label>
+                    <div class="col-sm-10">
+                        <input class="form-control" asp-for="UserName">
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                </div>
+                 <div class="form-group row">
+                    <label class="col-sm-2 col-form-label" asp-for="UserPassword">
+                    </label>
+                    <div class="col-sm-10">
+                        <input class="form-control" asp-for="UserPassword">
+                        <span asp-validation-for="UserPassword" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label" asp-for="ProfessionId">
+                    </label>
+                    <div class="col-sm-10">
+                       <select class="form-control select2" asp-for="ProfessionId" asp-items="@ViewBag.ProfessionId">
+                           <option selected disabled>---Seçin---</option>
+                       </select>
+                        <span asp-validation-for="ProfessionId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
                     <label class="col-sm-2 col-form-label" asp-for="RegisterDate">
                     </label>
                     <div class="col-sm-10">
@@ -82,3 +124,21 @@
     </div>
 </div>
 <!-- Page-body end -->
+@section addcss{
+<link rel="stylesheet" href="~/libs/select2/css/select2.css">
+}
+@section addjs{
+    <script src="~/libs/select2/js/select2.js"></script>
+<script src="~/libs/ckeditor5/ckeditor.min.js"></script>
+<script>
+    $(document).ready(function() {
+        ClassicEditor
+    .create(document.querySelector('#editor'))
+    .catch(error=>{
+        console.error(error);
+    });
+    $('.select2').select2();
+    });
+
+</script>
+}

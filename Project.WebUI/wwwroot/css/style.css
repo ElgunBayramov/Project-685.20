@@ -114,26 +114,6 @@ header {
                     color: #555;
                     transition: none;
                 }
-
-.container {
-    display: flex;
-    justify-content: center;
-    height: 45rem;
-    width: 90rem;
-    background: var(--color);
-    box-shadow: 0 1rem 2rem rgba(0, 0, 0, .3);
-    backdrop-filter: blur(.4rem);
-    border-radius: 1rem;
-    overflow: hidden;
-    opacity: 1;
-}
-
-#wexsi_melumat {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .theme-toggler {
     background: var(--color);
     box-shadow: 0 1rem 2rem rgba(0, 0, 0, .2);
@@ -150,30 +130,6 @@ header {
         margin: 2rem 2.5rem;
         box-shadow: 0 0 0 .5rem rgba(255, 255, 255, .2), 0 1rem 2rem rgba(0, 0, 0, .4);
     }
-
-.form-group {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-}
-
-input {
-    border-radius: 10px;
-    border: none;
-    background-color: #878f92;
-    color: white;
-    padding: 8px;
-    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
-}
-
-label {
-    width: 100%;
-    font-size: 22px;
-    color: white;
-    font-weight: 700;
-}
-
 
 main.table {
     width: 82vw;
@@ -395,10 +351,6 @@ tbody td.active {
             margin-left: 1.5rem;
         }
 
-    .form-group {
-        display: grid;
-        grid-template-columns: 1fr;
-    }
 
     td:not(:first-of-type) {
         min-width: 12.1rem;

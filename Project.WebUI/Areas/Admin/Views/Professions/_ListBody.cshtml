@@ -1,12 +1,10 @@
 ﻿@using Project.WebUI.Models.ViewModels
-@model PagedViewModel<Register>
+@model PagedViewModel<Profession>
 
 @foreach (var item in Model.Items)
 {
     <tr>
         <td>@item.Name</td>
-        <td>@item.Surname</td>
-        <td>@item.RegisterDate.ToString("dd MMM, yyyy")</td>
         <td class="operation">
             <a asp-action="edit" asp-route-id="@item.Id" class="btn btn-warning">
                 <i class="fa fa-pencil"></i>

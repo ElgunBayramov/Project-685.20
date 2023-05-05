@@ -3,21 +3,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Project.WebUI.AppCode.Extensions;
 using Project.WebUI.Business.ProfessionModule;
-using Project.WebUI.Business.RegisterModule;
 using System.Threading.Tasks;
 
 namespace Project.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class UsersController : Controller
+    public class ProfessionsController : Controller
     {
         private readonly IMediator mediator;
 
-        public UsersController(IMediator mediator)
+        public ProfessionsController(IMediator mediator)
         {
             this.mediator = mediator;
         }
-        public async Task<IActionResult> Index(RegisterPagedQuery query)
+        public async Task<IActionResult> Index(ProfessionPagedQuery query)
         {
             var response = await mediator.Send(query);
 
@@ -30,25 +29,22 @@ namespace Project.WebUI.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Create()
         {
-            var professions = await mediator.Send(new ProfessionsAllQuery());
-            ViewBag.ProfessionId = new SelectList(professions, "Id", "Name");
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(RegisterCreateCommand command)
+        public async Task<IActionResult> Create(ProfessionCreateCommand command)
         {
-            if (ModelState.IsValid)
+            var response = await mediator.Send(command);
+            if (response == null)
             {
-                var response = await mediator.Send(command);
-                return RedirectToAction(nameof(Index));
+                return View(command);
             }
-            var professions = await mediator.Send(new ProfessionsAllQuery());
-            ViewBag.ProfessionId = new SelectList(professions, "Id", "Name",command.ProfessionId);
-            return View(command);
+
+            return RedirectToAction(nameof(Index));
 
         }
-        public async Task<IActionResult> Details(RegisterSingleQuery query)
+        public async Task<IActionResult> Details(ProfessionSingleQuery query)
         {
             var response = await mediator.Send(query);
 
@@ -60,33 +56,25 @@ namespace Project.WebUI.Areas.Admin.Controllers
             return View(response);
         }
 
-        public async Task<IActionResult> Edit(RegisterSingleQuery query)
+        public async Task<IActionResult> Edit(ProfessionSingleQuery query)
         {
             var response = await mediator.Send(query);
             if (response == null)
             {
                 return NotFound();
             }
-            var professions = await mediator.Send(new ProfessionsAllQuery());
-            ViewBag.ProfessionId = new SelectList(professions, "Id", "Name",response.ProfessionId);
-            var command = new RegisterEditCommand();
+            var command = new ProfessionEditCommand();
             command.Name = response.Name;
-            command.Surname = response.Surname;
-            command.UserName = response.UserName;
-            command.UserPassword = response.UserPassword;
-            command.RegisterDate = response.RegisterDate;
             return View(command);
 
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(RegisterEditCommand command)
+        public async Task<IActionResult> Edit(ProfessionEditCommand command)
         {
             var response = await mediator.Send(command);
             if (response == null)
             {
-                var professions = await mediator.Send(new ProfessionsAllQuery());
-                ViewBag.ProfessionId = new SelectList(professions, "Id", "Name", response.ProfessionId);
                 return View(command);
             }
 
@@ -94,7 +82,7 @@ namespace Project.WebUI.Areas.Admin.Controllers
 
         }
         [HttpPost]
-        public async Task<IActionResult> Remove(RegisterRemoveCommand command)
+        public async Task<IActionResult> Remove(ProfessionRemoveCommand command)
         {
             var response = await mediator.Send(command);
 
@@ -103,7 +91,7 @@ namespace Project.WebUI.Areas.Admin.Controllers
             {
                 return Json(response);
             }
-            var newQuery = new RegisterPagedQuery
+            var newQuery = new ProfessionPagedQuery
             {
                 PageIndex = command.PageIndex,
                 PageSize = command.PageSize

@@ -8,6 +8,54 @@
     <link rel="icon" type="image/png" href="https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png" />
 	<title>Layihə-685.20</title>
     <style>
+        .container {
+    display: flex;
+    justify-content: center;
+    height: 45rem;
+    width: 90rem;
+    background: var(--color);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, .3);
+    backdrop-filter: blur(.4rem);
+    border-radius: 1rem;
+    overflow: hidden;
+    opacity: 1;
+}
+
+#wexsi_melumat {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+#wexsi_melumat form{
+    display: grid;
+    row-gap: 15px;
+    width: auto;
+    margin: auto;
+}
+.form-group {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  align-items: center;
+}
+
+ .form-group input {
+    display: flex;
+    font-weight: 600;
+text-align: center;
+    padding: 13px 20px;
+border-radius: 9px;
+font-size: 20px;
+color: white;
+}
+
+label {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: 700;
+color: white;    
+}
+
+
         body{
              background-image: url('../images/image.jpg'); 
         }
@@ -116,6 +164,48 @@
     border: none;
     background: none;
 }
+
+@@media ( max-width:1038px) {
+    body {
+        display: flex;
+        flex-direction: column;
+        padding: 5.5rem;
+        padding-left: 5%;
+        padding-right: 5%;
+        row-gap: 2rem;
+        place-items: center;
+    }
+
+    header,
+    .container,
+    .theme-toggler {
+        width: 100%;
+    }
+
+    .theme-toggler {
+        display: flex;
+        justify-content: center;
+    }
+
+        .theme-toggler span {
+            margin-right: 1.5rem;
+            margin-left: 1.5rem;
+        }
+
+    .form-group {
+        display: grid;
+        grid-template-columns: 1fr;
+        row-gap: 0;
+        place-items: center;
+    }
+    .form-group input{
+        font-size: 16px;
+        padding: 10px 0;
+    }
+#wexsi_melumat{
+    row-gap: 0;
+}
+
     </style>
 </head>
 <body>

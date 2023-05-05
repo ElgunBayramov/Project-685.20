@@ -10,8 +10,8 @@ using Project.WebUI.Models.DataContexts;
 namespace Project.WebUI.Migrations
 {
     [DbContext(typeof(ProjectDbContext))]
-    [Migration("20230505010209_DeletedTimes")]
-    partial class DeletedTimes
+    [Migration("20230505210639_AllTables")]
+    partial class AllTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,6 +28,9 @@ namespace Project.WebUI.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -42,6 +45,9 @@ namespace Project.WebUI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
@@ -315,6 +321,9 @@ namespace Project.WebUI.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -342,14 +351,8 @@ namespace Project.WebUI.Migrations
                     b.Property<int>("ProfessionId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("RegisterActive")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("RegisterDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("StatusId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Surname")
                         .HasColumnType("nvarchar(max)");
@@ -360,14 +363,9 @@ namespace Project.WebUI.Migrations
                     b.Property<string>("UserPassword")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserStatusId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ProfessionId");
-
-                    b.HasIndex("StatusId");
 
                     b.ToTable("Registers");
                 });
@@ -474,13 +472,7 @@ namespace Project.WebUI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Project.WebUI.Models.Entities.Status", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId");
-
                     b.Navigation("Profession");
-
-                    b.Navigation("Status");
                 });
 #pragma warning restore 612, 618
         }

@@ -16,6 +16,8 @@ namespace Project.WebUI.Business.RegisterModule
         public DateTime RegisterDate { get; set; }
         public string UserName { get; set; }
         public string UserPassword { get; set; }
+        public int ProfessionId { get; set; }
+
 
         public class RegisterCreateCommandHandler : IRequestHandler<RegisterCreateCommand, Register>
         {
@@ -36,6 +38,7 @@ namespace Project.WebUI.Business.RegisterModule
                 register.UserName = request.UserName;
                 register.UserPassword = request.UserPassword;
                 register.RegisterDate = (DateTime)request.RegisterDate;
+                register.ProfessionId = request.ProfessionId;
 
                 await db.Registers.AddAsync(register,cancellationToken);
                 await db.SaveChangesAsync(cancellationToken);

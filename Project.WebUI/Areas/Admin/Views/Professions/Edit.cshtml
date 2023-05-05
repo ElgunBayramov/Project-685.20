@@ -1,5 +1,5 @@
-﻿@using Project.WebUI.Business.RegisterModule
-@model RegisterEditCommand
+﻿@using Project.WebUI.Business.ProfessionModule
+@model ProfessionEditCommand
 @{
     ViewData["Title"] = "Edit";
 }
@@ -61,55 +61,6 @@
                     <div class="col-sm-10">
                         <input class="form-control" asp-for="Name">
                         <span asp-validation-for="Name" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label" asp-for="Surname">
-                    </label>
-                    <div class="col-sm-10">
-                        <input class="form-control" asp-for="Surname">
-                        <span asp-validation-for="Surname" class="text-danger"></span>
-                    </div>
-                </div>
-                 <div class="form-group row">
-                    <label class="col-sm-2 col-form-label" asp-for="FinCode">
-                    </label>
-                    <div class="col-sm-10">
-                        <input class="form-control" asp-for="FinCode">
-                        <span asp-validation-for="FinCode" class="text-danger"></span>
-                    </div>
-                </div>
-                 <div class="form-group row">
-                    <label class="col-sm-2 col-form-label" asp-for="UserName">
-                    </label>
-                    <div class="col-sm-10">
-                        <input class="form-control" asp-for="UserName">
-                        <span asp-validation-for="UserName" class="text-danger"></span>
-                    </div>
-                </div>
-                 <div class="form-group row">
-                    <label class="col-sm-2 col-form-label" asp-for="UserPassword">
-                    </label>
-                    <div class="col-sm-10">
-                        <input class="form-control" asp-for="UserPassword">
-                        <span asp-validation-for="UserPassword" class="text-danger"></span>
-                    </div>
-                </div>
-                 <div class="form-group row">
-                    <label class="col-sm-2 col-form-label" asp-for="ProfessionId">
-                    </label>
-                    <div class="col-sm-10">
-                       <select class="form-control select2" asp-for="ProfessionId" asp-items="@ViewBag.ProfessionId">
-                       </select>
-                        <span asp-validation-for="ProfessionId" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label" asp-for="RegisterDate">
-                    </label>
-                    <div class="col-sm-10">
-                        <input class="form-control" asp-for="RegisterDate">
-                        <span asp-validation-for="RegisterDate" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group row">
