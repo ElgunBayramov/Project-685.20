@@ -9521,7 +9521,7 @@ jQuery.extend( {
 		s.dataTypes = ( s.dataType || "*" ).toLowerCase().match( rnothtmlwhite ) || [ "" ];
 
 		// A cross-domain request is in order when the origin doesn't match the current origin.
-		if ( s.crossDomain == null ) {
+		if ( s.crossWebUI == null ) {
 			urlAnchor = document.createElement( "a" );
 
 			// Support: IE <=8 - 11, Edge 12 - 15
@@ -9533,13 +9533,13 @@ jQuery.extend( {
 				// Support: IE <=8 - 11 only
 				// Anchor's host property isn't correctly set when s.url is relative
 				urlAnchor.href = urlAnchor.href;
-				s.crossDomain = originAnchor.protocol + "//" + originAnchor.host !==
+				s.crossWebUI = originAnchor.protocol + "//" + originAnchor.host !==
 					urlAnchor.protocol + "//" + urlAnchor.host;
 			} catch ( e ) {
 
-				// If there is an error parsing the URL, assume it is crossDomain,
+				// If there is an error parsing the URL, assume it is crossWebUI,
 				// it can be rejected by the transport if it is invalid
-				s.crossDomain = true;
+				s.crossWebUI = true;
 			}
 		}
 
@@ -9978,7 +9978,7 @@ jQuery.ajaxTransport( function( options ) {
 	var callback, errorCallback;
 
 	// Cross domain only allowed if supported through XMLHttpRequest
-	if ( support.cors || xhrSupported && !options.crossDomain ) {
+	if ( support.cors || xhrSupported && !options.crossWebUI ) {
 		return {
 			send: function( headers, complete ) {
 				var i,
@@ -10009,7 +10009,7 @@ jQuery.ajaxTransport( function( options ) {
 				// akin to a jigsaw puzzle, we simply never set it to be sure.
 				// (it can always be set on a per-request basis or even using ajaxSetup)
 				// For same-domain requests, won't change header if already provided.
-				if ( !options.crossDomain && !headers[ "X-Requested-With" ] ) {
+				if ( !options.crossWebUI && !headers[ "X-Requested-With" ] ) {
 					headers[ "X-Requested-With" ] = "XMLHttpRequest";
 				}
 
@@ -10120,7 +10120,7 @@ jQuery.ajaxTransport( function( options ) {
 
 // Prevent auto-execution of scripts when no explicit dataType was provided (See gh-2432)
 jQuery.ajaxPrefilter( function( s ) {
-	if ( s.crossDomain ) {
+	if ( s.crossWebUI ) {
 		s.contents.script = false;
 	}
 } );
@@ -10142,12 +10142,12 @@ jQuery.ajaxSetup( {
 	}
 } );
 
-// Handle cache's special case and crossDomain
+// Handle cache's special case and crossWebUI
 jQuery.ajaxPrefilter( "script", function( s ) {
 	if ( s.cache === undefined ) {
 		s.cache = false;
 	}
-	if ( s.crossDomain ) {
+	if ( s.crossWebUI ) {
 		s.type = "GET";
 	}
 } );
@@ -10156,7 +10156,7 @@ jQuery.ajaxPrefilter( "script", function( s ) {
 jQuery.ajaxTransport( "script", function( s ) {
 
 	// This transport only deals with cross domain or forced-by-attrs requests
-	if ( s.crossDomain || s.scriptAttrs ) {
+	if ( s.crossWebUI || s.scriptAttrs ) {
 		var script, callback;
 		return {
 			send: function( _, complete ) {

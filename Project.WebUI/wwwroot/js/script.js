@@ -1,12 +1,12 @@
 ﻿let themeColor = document.querySelectorAll('.theme-toggler span');
 
-themeColor.forEach(color => color.addEventListener('click', () =>{
+themeColor.forEach(color => color.addEventListener('click', () => {
     let background = color.style.background;
     document.querySelector('body').style.background = background;
 }));
 let icon = document.querySelector(".picture");
-icon.addEventListener("click",function(){
-     body.innerHTML='<img src="image.jpg" alt="">'
+icon.addEventListener("click", function () {
+    body.innerHTML = '<img src="image.jpg" alt="">'
 })
 const search = document.querySelector('.input-group input'),
     table_rows = document.querySelectorAll('tbody tr'),
@@ -103,7 +103,8 @@ function sortTable(n) {
         }
     }
 }
-var titles = ["Qapıda təqdimatların verilməsi", "Saytımıza xoş gəlmisiniz!", "Layihə-685.20" ];
+
+var titles = ["Qapıda təqdimatların verilməsi", "Saytımıza xoş gəlmisiniz!", "Layihə-685.20"];
 var counter = 0;
 setInterval(function () {
     document.title = titles[counter % titles.length];

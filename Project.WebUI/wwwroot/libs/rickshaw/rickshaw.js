@@ -486,7 +486,7 @@ Rickshaw.Graph = function(args) {
 		this.series.active = function() { return self.series.filter( function(s) { return !s.disabled } ) };
 	};
 
-	this.dataDomain = function() {
+	this.dataWebUI = function() {
 
 		var data = this.series.map( function(s) { return s.data } );
 
@@ -1762,7 +1762,7 @@ Rickshaw.Graph.Axis.Y.Scaled = Rickshaw.Class.create( Rickshaw.Graph.Axis.Y, {
     // Adjust scale's domain to compensate for adjustments to the
     // renderer's domain (e.g. padding).
     var domain = this.scale.domain();
-    var renderDomain = this.graph.renderer.domain().y;
+    var renderWebUI = this.graph.renderer.domain().y;
 
     var extents = [
       Math.min.apply(Math, domain),
@@ -1774,8 +1774,8 @@ Rickshaw.Graph.Axis.Y.Scaled = Rickshaw.Class.create( Rickshaw.Graph.Axis.Y, {
     var extentMap = d3.scale.linear().domain([0, 1]).range(extents);
 
     var adjExtents = [
-      extentMap(renderDomain[0]),
-      extentMap(renderDomain[1])];
+      extentMap(renderWebUI[0]),
+      extentMap(renderWebUI[1])];
 
     // A mapping from the original domain to the adjusted domain.
     var adjustment = d3.scale.linear().domain(extents).range(adjExtents);
@@ -2611,7 +2611,7 @@ Rickshaw.Graph.RangeSlider = Rickshaw.Class.create({
 
 		// base the slider's min/max on the first graph
 		this.graph = graphs[0];
-		domain = graphs[0].dataDomain();
+		domain = graphs[0].dataWebUI();
 
 		$(function() {
 			$(element).slider({
@@ -2659,7 +2659,7 @@ Rickshaw.Graph.RangeSlider = Rickshaw.Class.create({
 
 		var values = $(element).slider('option', 'values');
 
-		var domain = graph.dataDomain();
+		var domain = graph.dataWebUI();
 
 		$(element).slider('option', 'min', domain[0]);
 		$(element).slider('option', 'max', domain[1]);
@@ -2687,7 +2687,7 @@ Rickshaw.Graph.RangeSlider = Rickshaw.Class.create({
 		graph.window.xMax = ui.values[1];
 		graph.update();
 
-		var domain = graph.dataDomain();
+		var domain = graph.dataWebUI();
 
 		// if we're at an extreme, stick there
 		if (domain[0] == ui.values[0]) {
@@ -2885,7 +2885,7 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 
 		var domainScale = d3.scale.linear()
 			.domain([0, this.previewWidth])
-			.range(masterGraph.dataDomain());
+			.range(masterGraph.dataWebUI());
 
 		var currentWindow = [masterGraph.window.xMin, masterGraph.window.xMax];
 
@@ -3104,7 +3104,7 @@ Rickshaw.Graph.RangeSlider.Preview = Rickshaw.Class.create({
 				var domainScale = d3.scale.linear()
 					.interpolate(d3.interpolateNumber)
 					.domain([0, self.previewWidth])
-					.range(graph.dataDomain());
+					.range(graph.dataWebUI());
 
 				var windowAfterDrag = [
 					domainScale(frameAfterDrag[0]),

@@ -1933,7 +1933,7 @@
   }
   function d3_xhr(url, mimeType, response, callback) {
     var xhr = {}, dispatch = d3.dispatch("beforesend", "progress", "load", "error"), headers = {}, request = new XMLHttpRequest(), responseType = null;
-    if (this.XDomainRequest && !("withCredentials" in request) && /^(http(s)?:)?\/\//.test(url)) request = new XDomainRequest();
+    if (this.XWebUIRequest && !("withCredentials" in request) && /^(http(s)?:)?\/\//.test(url)) request = new XWebUIRequest();
     "onload" in request ? request.onload = request.onerror = respond : request.onreadystatechange = function() {
       request.readyState > 3 && respond();
     };
@@ -9087,7 +9087,7 @@
     });
   }
   d3.svg.brush = function() {
-    var event = d3_eventDispatch(brush, "brushstart", "brush", "brushend"), x = null, y = null, xExtent = [ 0, 0 ], yExtent = [ 0, 0 ], xExtentDomain, yExtentDomain, xClamp = true, yClamp = true, resizes = d3_svg_brushResizes[0];
+    var event = d3_eventDispatch(brush, "brushstart", "brush", "brushend"), x = null, y = null, xExtent = [ 0, 0 ], yExtent = [ 0, 0 ], xExtentWebUI, yExtentWebUI, xClamp = true, yClamp = true, resizes = d3_svg_brushResizes[0];
     function brush(g) {
       g.each(function() {
         var g = d3.select(this).style("pointer-events", "all").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)").on("mousedown.brush", brushstart).on("touchstart.brush", brushstart);
@@ -9125,14 +9125,14 @@
         var event_ = event.of(this, arguments), extent1 = {
           x: xExtent,
           y: yExtent,
-          i: xExtentDomain,
-          j: yExtentDomain
+          i: xExtentWebUI,
+          j: yExtentWebUI
         }, extent0 = this.__chart__ || extent1;
         this.__chart__ = extent1;
         if (d3_transitionInheritId) {
           d3.select(this).transition().each("start.brush", function() {
-            xExtentDomain = extent0.i;
-            yExtentDomain = extent0.j;
+            xExtentWebUI = extent0.i;
+            yExtentWebUI = extent0.j;
             xExtent = extent0.x;
             yExtent = extent0.y;
             event_({
@@ -9140,7 +9140,7 @@
             });
           }).tween("brush:brush", function() {
             var xi = d3_interpolateArray(xExtent, extent1.x), yi = d3_interpolateArray(yExtent, extent1.y);
-            xExtentDomain = yExtentDomain = null;
+            xExtentWebUI = yExtentWebUI = null;
             return function(t) {
               xExtent = extent1.x = xi(t);
               yExtent = extent1.y = yi(t);
@@ -9150,8 +9150,8 @@
               });
             };
           }).each("end.brush", function() {
-            xExtentDomain = extent1.i;
-            yExtentDomain = extent1.j;
+            xExtentWebUI = extent1.i;
+            yExtentWebUI = extent1.j;
             event_({
               type: "brush",
               mode: "resize"
@@ -9278,7 +9278,7 @@
           }
         }
         if (extent[0] != min || extent[1] != max) {
-          if (i) yExtentDomain = null; else xExtentDomain = null;
+          if (i) yExtentWebUI = null; else xExtentWebUI = null;
           extent[0] = min;
           extent[1] = max;
           return true;
@@ -9316,8 +9316,8 @@
       var x0, x1, y0, y1, t;
       if (!arguments.length) {
         if (x) {
-          if (xExtentDomain) {
-            x0 = xExtentDomain[0], x1 = xExtentDomain[1];
+          if (xExtentWebUI) {
+            x0 = xExtentWebUI[0], x1 = xExtentWebUI[1];
           } else {
             x0 = xExtent[0], x1 = xExtent[1];
             if (x.invert) x0 = x.invert(x0), x1 = x.invert(x1);
@@ -9325,8 +9325,8 @@
           }
         }
         if (y) {
-          if (yExtentDomain) {
-            y0 = yExtentDomain[0], y1 = yExtentDomain[1];
+          if (yExtentWebUI) {
+            y0 = yExtentWebUI[0], y1 = yExtentWebUI[1];
           } else {
             y0 = yExtent[0], y1 = yExtent[1];
             if (y.invert) y0 = y.invert(y0), y1 = y.invert(y1);
@@ -9338,7 +9338,7 @@
       if (x) {
         x0 = z[0], x1 = z[1];
         if (y) x0 = x0[0], x1 = x1[0];
-        xExtentDomain = [ x0, x1 ];
+        xExtentWebUI = [ x0, x1 ];
         if (x.invert) x0 = x(x0), x1 = x(x1);
         if (x1 < x0) t = x0, x0 = x1, x1 = t;
         if (x0 != xExtent[0] || x1 != xExtent[1]) xExtent = [ x0, x1 ];
@@ -9346,7 +9346,7 @@
       if (y) {
         y0 = z[0], y1 = z[1];
         if (x) y0 = y0[1], y1 = y1[1];
-        yExtentDomain = [ y0, y1 ];
+        yExtentWebUI = [ y0, y1 ];
         if (y.invert) y0 = y(y0), y1 = y(y1);
         if (y1 < y0) t = y0, y0 = y1, y1 = t;
         if (y0 != yExtent[0] || y1 != yExtent[1]) yExtent = [ y0, y1 ];
@@ -9356,7 +9356,7 @@
     brush.clear = function() {
       if (!brush.empty()) {
         xExtent = [ 0, 0 ], yExtent = [ 0, 0 ];
-        xExtentDomain = yExtentDomain = null;
+        xExtentWebUI = yExtentWebUI = null;
       }
       return brush;
     };

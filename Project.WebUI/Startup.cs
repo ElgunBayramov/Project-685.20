@@ -1,15 +1,21 @@
+using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Project.AppCode.Providers;
+using Project.WebUI.AppCode.Extensions;
+using Project.WebUI.AppCode.Providers;
 using Project.WebUI.Models.DataContexts;
+using Project.WebUI.Models.Entities.Membership;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Project.WebUI
 {
@@ -32,18 +38,90 @@ namespace Project.WebUI
             {
                 cfg.UseSqlServer(configuration.GetConnectionString("projectCString"));
             });
-        }
+            services.AddIdentity<ProjectUser, ProjectRole>()
+                .AddEntityFrameworkStores<ProjectDbContext>()
+                .AddDefaultTokenProviders()
+                .AddErrorDescriber<ProjectIdentityErrorDescriber>();
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            services.AddScoped<UserManager<ProjectUser>>();
+            services.AddScoped<SignInManager<ProjectUser>>();
+            services.AddScoped<RoleManager<ProjectRole>>();
+            var assemblies = AppDomain.CurrentDomain
+               .GetAssemblies()
+               .Where(a => a.FullName.StartsWith("Project."))
+               .ToArray();
+            services.AddMediatR(assemblies);
+            services.AddAuthorization(cfg =>
+            {
+
+                foreach (string principal in AppClaimProvider.principals)
+                {
+                    cfg.AddPolicy(principal, p =>
+                    {
+                        p.RequireAssertion(handler =>
+                        {
+                            return handler.User.HasAccess(principal);
+
+                        });
+                    });
+                }
+            });
+
+
+            //services.Configure<CryptoServiceOptions>(cfg =>
+            //{
+            //    configuration.GetSection("cryptography").Bind(cfg);
+            //});
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            //services.AddSingleton<ICryptoService, CryptoService>();
+            services.AddScoped<IClaimsTransformation, AppClaimProvider>();
+            services.AddAuthentication(cfg =>
+            {
+                cfg.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                cfg.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                cfg.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                cfg.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                cfg.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+               .AddCookie(cfg =>
+               {
+                   cfg.Cookie.Name = "project";
+                   cfg.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                   cfg.LoginPath = "/signin.html";
+                   cfg.AccessDeniedPath = "/accessdenied.html";
+               });
+
+            services.AddAuthorization(cfg =>
+            {
+
+                foreach (string principal in AppClaimProvider.principals)
+                {
+                    cfg.AddPolicy(principal, p =>
+                    {
+                        p.RequireAssertion(handler =>
+                        {
+                            return handler.User.HasAccess(principal);
+
+                        });
+                    });
+                }
+            });
+
+        }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseStaticFiles();
+            app.SeedMembership();
+            app.UseStaticFiles();   
 
             app.UseRouting();
+            app.UseAuthentication();
+
+            app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {
@@ -52,7 +130,7 @@ namespace Project.WebUI
                   pattern: "admin/{controller=home}/{action=index}/{id?}");
                 endpoints.MapControllerRoute(
                      name: "default",
-                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                     pattern: "{controller=account}/{action=signin}/{id?}");
             });
         }
     }

@@ -2002,8 +2002,8 @@ nv.models.boxPlot = function() {
         getOlColor = function(d, i, j) { return undefined },
         color = nv.utils.defaultColor(),
         container = null,
-        xDomain, xRange,
-        yDomain, yRange,
+        xWebUI, xRange,
+        yWebUI, yRange,
         dispatch = d3.dispatch('elementMouseover', 'elementMouseout', 'elementMousemove', 'renderEnd'),
         duration = 250,
         maxBoxWidth = null;
@@ -2025,12 +2025,12 @@ nv.models.boxPlot = function() {
             nv.utils.initSVG(container);
 
             // Setup Scales
-            xScale.domain(xDomain || data.map(function(d,i) { return getX(d,i); }))
+            xScale.domain(xWebUI || data.map(function(d,i) { return getX(d,i); }))
                 .rangeBands(xRange || [0, availableWidth], 0.1);
 
-            // if we know yDomain, no need to calculate
+            // if we know yWebUI, no need to calculate
             var yData = []
-            if (!yDomain) {
+            if (!yWebUI) {
                 // (y-range is based on quartiles, whiskers and outliers)
                 var values = [], yMin, yMax;
                 data.forEach(function (d, i) {
@@ -2051,7 +2051,7 @@ nv.models.boxPlot = function() {
                 yData = [ yMin, yMax ] ;
             }
 
-            yScale.domain(yDomain || yData);
+            yScale.domain(yWebUI || yData);
             yScale.range(yRange || [availableHeight, 0]);
 
             //store old scales if they exist
@@ -2266,8 +2266,8 @@ nv.models.boxPlot = function() {
         outlierColor: {get: function(){return getOlColor;}, set: function(_){getOlColor=_;}},
         xScale:  {get: function(){return xScale;}, set: function(_){xScale=_;}},
         yScale:  {get: function(){return yScale;}, set: function(_){yScale=_;}},
-        xDomain: {get: function(){return xDomain;}, set: function(_){xDomain=_;}},
-        yDomain: {get: function(){return yDomain;}, set: function(_){yDomain=_;}},
+        xWebUI: {get: function(){return xWebUI;}, set: function(_){xWebUI=_;}},
+        yWebUI: {get: function(){return yWebUI;}, set: function(_){yWebUI=_;}},
         xRange:  {get: function(){return xRange;}, set: function(_){xRange=_;}},
         yRange:  {get: function(){return yRange;}, set: function(_){yRange=_;}},
         id:          {get: function(){return id;}, set: function(_){id=_;}},
@@ -2914,7 +2914,7 @@ nv.models.bulletChart = function() {
 
             // Compute the new x-scale.
             var x1 = d3.scale.linear()
-                .domain([0, Math.max(rangez[0], (markerz[0] || 0), measurez[0])])  // TODO: need to allow forceX and forceY, and xDomain, yDomain
+                .domain([0, Math.max(rangez[0], (markerz[0] || 0), measurez[0])])  // TODO: need to allow forceX and forceY, and xWebUI, yWebUI
                 .range(reverse ? [availableWidth, 0] : [0, availableWidth]);
 
             // Retrieve the old x-scale, if this is an update.
@@ -3088,8 +3088,8 @@ nv.models.candlestickBar = function() {
         , clipEdge = true
         , color = nv.utils.defaultColor()
         , interactive = false
-        , xDomain
-        , yDomain
+        , xWebUI
+        , yWebUI
         , xRange
         , yRange
         , dispatch = d3.dispatch('stateChange', 'changeState', 'renderEnd', 'chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
@@ -3111,14 +3111,14 @@ nv.models.candlestickBar = function() {
             var barWidth = (availableWidth / data[0].values.length) * .45;
 
             // Setup Scales
-            x.domain(xDomain || d3.extent(data[0].values.map(getX).concat(forceX) ));
+            x.domain(xWebUI || d3.extent(data[0].values.map(getX).concat(forceX) ));
 
             if (padData)
                 x.range(xRange || [availableWidth * .5 / data[0].values.length, availableWidth * (data[0].values.length - .5)  / data[0].values.length ]);
             else
                 x.range(xRange || [5 + barWidth / 2, availableWidth - barWidth / 2 - 5]);
 
-            y.domain(yDomain || [
+            y.domain(yWebUI || [
                     d3.min(data[0].values.map(getLow).concat(forceY)),
                     d3.max(data[0].values.map(getHigh).concat(forceY))
                 ]
@@ -3254,8 +3254,8 @@ nv.models.candlestickBar = function() {
         height:   {get: function(){return height;}, set: function(_){height=_;}},
         xScale:   {get: function(){return x;}, set: function(_){x=_;}},
         yScale:   {get: function(){return y;}, set: function(_){y=_;}},
-        xDomain:  {get: function(){return xDomain;}, set: function(_){xDomain=_;}},
-        yDomain:  {get: function(){return yDomain;}, set: function(_){yDomain=_;}},
+        xWebUI:  {get: function(){return xWebUI;}, set: function(_){xWebUI=_;}},
+        yWebUI:  {get: function(){return yWebUI;}, set: function(_){yWebUI=_;}},
         xRange:   {get: function(){return xRange;}, set: function(_){xRange=_;}},
         yRange:   {get: function(){return yRange;}, set: function(_){yRange=_;}},
         forceX:   {get: function(){return forceX;}, set: function(_){forceX=_;}},
@@ -3455,28 +3455,28 @@ nv.models.cumulativeLineChart = function() {
             y = lines.yScale();
 
             if (!rescaleY) {
-                var seriesDomains = data
+                var seriesWebUIs = data
                     .filter(function(series) { return !series.disabled })
                     .map(function(series,i) {
-                        var initialDomain = d3.extent(series.values, lines.y());
+                        var initialWebUI = d3.extent(series.values, lines.y());
 
                         //account for series being disabled when losing 95% or more
-                        if (initialDomain[0] < -.95) initialDomain[0] = -.95;
+                        if (initialWebUI[0] < -.95) initialWebUI[0] = -.95;
 
                         return [
-                                (initialDomain[0] - initialDomain[1]) / (1 + initialDomain[1]),
-                                (initialDomain[1] - initialDomain[0]) / (1 + initialDomain[0])
+                                (initialWebUI[0] - initialWebUI[1]) / (1 + initialWebUI[1]),
+                                (initialWebUI[1] - initialWebUI[0]) / (1 + initialWebUI[0])
                         ];
                     });
 
-                var completeDomain = [
-                    d3.min(seriesDomains, function(d) { return d[0] }),
-                    d3.max(seriesDomains, function(d) { return d[1] })
+                var completeWebUI = [
+                    d3.min(seriesWebUIs, function(d) { return d[0] }),
+                    d3.max(seriesWebUIs, function(d) { return d[1] })
                 ];
 
-                lines.yDomain(completeDomain);
+                lines.yWebUI(completeWebUI);
             } else {
-                lines.yDomain(null);
+                lines.yWebUI(null);
             }
 
             dx.domain([0, data[0].values.length - 1]) //Assumes all series have same length
@@ -3962,8 +3962,8 @@ nv.models.discreteBar = function() {
         , color = nv.utils.defaultColor()
         , showValues = false
         , valueFormat = d3.format(',.2f')
-        , xDomain
-        , yDomain
+        , xWebUI
+        , yWebUI
         , xRange
         , yRange
         , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove', 'renderEnd')
@@ -3996,16 +3996,16 @@ nv.models.discreteBar = function() {
 
             // Setup Scales
             // remap and flatten the data for use in calculating the scales' domains
-            var seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
+            var seriesData = (xWebUI && yWebUI) ? [] : // if we know xWebUI and yWebUI, no need to calculate
                 data.map(function(d) {
                     return d.values.map(function(d,i) {
                         return { x: getX(d,i), y: getY(d,i), y0: d.y0 }
                     })
                 });
 
-            x   .domain(xDomain || d3.merge(seriesData).map(function(d) { return d.x }))
+            x   .domain(xWebUI || d3.merge(seriesData).map(function(d) { return d.x }))
                 .rangeBands(xRange || [0, availableWidth], .1);
-            y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y }).concat(forceY)));
+            y   .domain(yWebUI || d3.extent(d3.merge(seriesData).map(function(d) { return d.y }).concat(forceY)));
 
             // If showValues, pad the Y axis range to account for label height
             if (showValues) y.range(yRange || [availableHeight - (y.domain()[0] < 0 ? 12 : 0), y.domain()[1] > 0 ? 12 : 0]);
@@ -4167,8 +4167,8 @@ nv.models.discreteBar = function() {
         y:       {get: function(){return getY;}, set: function(_){getY=_;}},
         xScale:  {get: function(){return x;}, set: function(_){x=_;}},
         yScale:  {get: function(){return y;}, set: function(_){y=_;}},
-        xDomain: {get: function(){return xDomain;}, set: function(_){xDomain=_;}},
-        yDomain: {get: function(){return yDomain;}, set: function(_){yDomain=_;}},
+        xWebUI: {get: function(){return xWebUI;}, set: function(_){xWebUI=_;}},
+        yWebUI: {get: function(){return yWebUI;}, set: function(_){yWebUI=_;}},
         xRange:  {get: function(){return xRange;}, set: function(_){xRange=_;}},
         yRange:  {get: function(){return yRange;}, set: function(_){yRange=_;}},
         valueFormat:    {get: function(){return valueFormat;}, set: function(_){valueFormat=_;}},
@@ -5492,8 +5492,8 @@ nv.models.historicalBar = function() {
         , padData = false
         , clipEdge = true
         , color = nv.utils.defaultColor()
-        , xDomain
-        , yDomain
+        , xWebUI
+        , yWebUI
         , xRange
         , yRange
         , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove', 'renderEnd')
@@ -5513,14 +5513,14 @@ nv.models.historicalBar = function() {
             nv.utils.initSVG(container);
 
             // Setup Scales
-            x.domain(xDomain || d3.extent(data[0].values.map(getX).concat(forceX) ));
+            x.domain(xWebUI || d3.extent(data[0].values.map(getX).concat(forceX) ));
 
             if (padData)
                 x.range(xRange || [availableWidth * .5 / data[0].values.length, availableWidth * (data[0].values.length - .5)  / data[0].values.length ]);
             else
                 x.range(xRange || [0, availableWidth]);
 
-            y.domain(yDomain || d3.extent(data[0].values.map(getY).concat(forceY) ))
+            y.domain(yWebUI || d3.extent(data[0].values.map(getY).concat(forceY) ))
                 .range(yRange || [availableHeight, 0]);
 
             // If scale's domain don't have a range, slightly adjust to make one... so a chart can show a single data point
@@ -5680,8 +5680,8 @@ nv.models.historicalBar = function() {
         y:       {get: function(){return getY;}, set: function(_){getY=_;}},
         xScale:  {get: function(){return x;}, set: function(_){x=_;}},
         yScale:  {get: function(){return y;}, set: function(_){y=_;}},
-        xDomain: {get: function(){return xDomain;}, set: function(_){xDomain=_;}},
-        yDomain: {get: function(){return yDomain;}, set: function(_){yDomain=_;}},
+        xWebUI: {get: function(){return xWebUI;}, set: function(_){xWebUI=_;}},
+        yWebUI: {get: function(){return yWebUI;}, set: function(_){yWebUI=_;}},
         xRange:  {get: function(){return xRange;}, set: function(_){xRange=_;}},
         yRange:  {get: function(){return yRange;}, set: function(_){yRange=_;}},
         clipEdge:    {get: function(){return clipEdge;}, set: function(_){clipEdge=_;}},
@@ -6522,7 +6522,7 @@ nv.models.line = function() {
 
     scatter
         .pointSize(16) // default size
-        .pointDomain([16,256]) //set to speed up calculation, needs to be unset if there is a custom size accessor
+        .pointWebUI([16,256]) //set to speed up calculation, needs to be unset if there is a custom size accessor
     ;
 
     //============================================================
@@ -6983,7 +6983,7 @@ nv.models.lineChart = function() {
                     .attr('transform', 'translate(0,' + ( availableHeight + margin.bottom + focus.margin().top) + ')')
                     .datum(data.filter(function(d) { return !d.disabled; }))
                     .call(focus);
-                var extent = focus.brush.empty() ? focus.xDomain() : focus.brush.extent();
+                var extent = focus.brush.empty() ? focus.xWebUI() : focus.brush.extent();
                 if(extent !== null){
                     onBrush(extent);
                 }
@@ -7969,8 +7969,8 @@ nv.models.multiBar = function() {
         , barColor = null // adding the ability to set the color for each rather than the whole group
         , disabled // used in conjunction with barColor to communicate from multiBarHorizontalChart what series are disabled
         , duration = 500
-        , xDomain
-        , yDomain
+        , xWebUI
+        , yWebUI
         , xRange
         , yRange
         , groupSpacing = 0.1
@@ -8069,17 +8069,17 @@ nv.models.multiBar = function() {
             }
             // Setup Scales
             // remap and flatten the data for use in calculating the scales' domains
-            var seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
+            var seriesData = (xWebUI && yWebUI) ? [] : // if we know xWebUI and yWebUI, no need to calculate
                 data.map(function(d, idx) {
                     return d.values.map(function(d,i) {
                         return { x: getX(d,i), y: getY(d,i), y0: d.y0, y1: d.y1, idx:idx }
                     })
                 });
 
-            x.domain(xDomain || d3.merge(seriesData).map(function(d) { return d.x }))
+            x.domain(xWebUI || d3.merge(seriesData).map(function(d) { return d.x }))
                 .rangeBands(xRange || [0, availableWidth], groupSpacing);
 
-            y.domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) {
+            y.domain(yWebUI || d3.extent(d3.merge(seriesData).map(function(d) {
                 var domain = d.y;
                 // increase the domain range if this series is stackable
                 if (stacked && !data[d.idx].nonStackable) {
@@ -8336,8 +8336,8 @@ nv.models.multiBar = function() {
         y:       {get: function(){return getY;}, set: function(_){getY=_;}},
         xScale:  {get: function(){return x;}, set: function(_){x=_;}},
         yScale:  {get: function(){return y;}, set: function(_){y=_;}},
-        xDomain: {get: function(){return xDomain;}, set: function(_){xDomain=_;}},
-        yDomain: {get: function(){return yDomain;}, set: function(_){yDomain=_;}},
+        xWebUI: {get: function(){return xWebUI;}, set: function(_){xWebUI=_;}},
+        yWebUI: {get: function(){return yWebUI;}, set: function(_){yWebUI=_;}},
         xRange:  {get: function(){return xRange;}, set: function(_){xRange=_;}},
         yRange:  {get: function(){return yRange;}, set: function(_){yRange=_;}},
         forceY:  {get: function(){return forceY;}, set: function(_){forceY=_;}},
@@ -8915,8 +8915,8 @@ nv.models.multiBarHorizontal = function() {
         , fillOpacity = 0.75
         , valueFormat = d3.format(',.2f')
         , delay = 1200
-        , xDomain
-        , yDomain
+        , xWebUI
+        , yWebUI
         , xRange
         , yRange
         , duration = 250
@@ -8974,17 +8974,17 @@ nv.models.multiBarHorizontal = function() {
 
             // Setup Scales
             // remap and flatten the data for use in calculating the scales' domains
-            var seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
+            var seriesData = (xWebUI && yWebUI) ? [] : // if we know xWebUI and yWebUI, no need to calculate
                 data.map(function(d) {
                     return d.values.map(function(d,i) {
                         return { x: getX(d,i), y: getY(d,i), y0: d.y0, y1: d.y1 }
                     })
                 });
 
-            x.domain(xDomain || d3.merge(seriesData).map(function(d) { return d.x }))
+            x.domain(xWebUI || d3.merge(seriesData).map(function(d) { return d.x }))
                 .rangeBands(xRange || [0, availableHeight], groupSpacing);
 
-            y.domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return stacked ? (d.y > 0 ? d.y1 + d.y : d.y1 ) : d.y }).concat(forceY)))
+            y.domain(yWebUI || d3.extent(d3.merge(seriesData).map(function(d) { return stacked ? (d.y > 0 ? d.y1 + d.y : d.y1 ) : d.y }).concat(forceY)))
 
             if (showValues && !stacked)
                 y.range(yRange || [(y.domain()[0] < 0 ? valuePadding : 0), availableWidth - (y.domain()[1] > 0 ? valuePadding : 0) ]);
@@ -9208,8 +9208,8 @@ nv.models.multiBarHorizontal = function() {
         yErr:       {get: function(){return getYerr;}, set: function(_){getYerr=_;}},
         xScale:  {get: function(){return x;}, set: function(_){x=_;}},
         yScale:  {get: function(){return y;}, set: function(_){y=_;}},
-        xDomain: {get: function(){return xDomain;}, set: function(_){xDomain=_;}},
-        yDomain: {get: function(){return yDomain;}, set: function(_){yDomain=_;}},
+        xWebUI: {get: function(){return xWebUI;}, set: function(_){xWebUI=_;}},
+        yWebUI: {get: function(){return yWebUI;}, set: function(_){yWebUI=_;}},
         xRange:  {get: function(){return xRange;}, set: function(_){xRange=_;}},
         yRange:  {get: function(){return yRange;}, set: function(_){yRange=_;}},
         forceY:  {get: function(){return forceY;}, set: function(_){forceY=_;}},
@@ -9640,8 +9640,8 @@ nv.models.multiChart = function() {
         height = null,
         showLegend = true,
         noData = null,
-        yDomain1,
-        yDomain2,
+        yWebUI1,
+        yWebUI2,
         getX = function(d) { return d.x },
         getY = function(d) { return d.y},
         interpolate = 'linear',
@@ -9841,21 +9841,21 @@ nv.models.multiChart = function() {
                 return a.map(function(aVal,i){return {x: aVal.x, y: aVal.y + b[i].y}})
             }).concat([{x:0, y:0}]) : [];
 
-            yScale1 .domain(yDomain1 || d3.extent(d3.merge(series1).concat(extraValue1), function(d) { return d.y } ))
+            yScale1 .domain(yWebUI1 || d3.extent(d3.merge(series1).concat(extraValue1), function(d) { return d.y } ))
                 .range([0, availableHeight]);
 
-            yScale2 .domain(yDomain2 || d3.extent(d3.merge(series2).concat(extraValue2), function(d) { return d.y } ))
+            yScale2 .domain(yWebUI2 || d3.extent(d3.merge(series2).concat(extraValue2), function(d) { return d.y } ))
                 .range([0, availableHeight]);
 
-            lines1.yDomain(yScale1.domain());
-            scatters1.yDomain(yScale1.domain());
-            bars1.yDomain(yScale1.domain());
-            stack1.yDomain(yScale1.domain());
+            lines1.yWebUI(yScale1.domain());
+            scatters1.yWebUI(yScale1.domain());
+            bars1.yWebUI(yScale1.domain());
+            stack1.yWebUI(yScale1.domain());
 
-            lines2.yDomain(yScale2.domain());
-            scatters2.yDomain(yScale2.domain());
-            bars2.yDomain(yScale2.domain());
-            stack2.yDomain(yScale2.domain());
+            lines2.yWebUI(yScale2.domain());
+            scatters2.yWebUI(yScale2.domain());
+            bars2.yWebUI(yScale2.domain());
+            stack2.yWebUI(yScale2.domain());
 
             if(dataStack1.length){d3.transition(stack1Wrap).call(stack1);}
             if(dataStack2.length){d3.transition(stack2Wrap).call(stack2);}
@@ -10147,8 +10147,8 @@ nv.models.multiChart = function() {
         width:      {get: function(){return width;}, set: function(_){width=_;}},
         height:     {get: function(){return height;}, set: function(_){height=_;}},
         showLegend: {get: function(){return showLegend;}, set: function(_){showLegend=_;}},
-        yDomain1:      {get: function(){return yDomain1;}, set: function(_){yDomain1=_;}},
-        yDomain2:    {get: function(){return yDomain2;}, set: function(_){yDomain2=_;}},
+        yWebUI1:      {get: function(){return yWebUI1;}, set: function(_){yWebUI1=_;}},
+        yWebUI2:    {get: function(){return yWebUI2;}, set: function(_){yWebUI2=_;}},
         noData:    {get: function(){return noData;}, set: function(_){noData=_;}},
         interpolate:    {get: function(){return interpolate;}, set: function(_){interpolate=_;}},
         legendRightAxisHint:    {get: function(){return legendRightAxisHint;}, set: function(_){legendRightAxisHint=_;}},
@@ -10251,8 +10251,8 @@ nv.models.ohlcBar = function() {
         , clipEdge = true
         , color = nv.utils.defaultColor()
         , interactive = false
-        , xDomain
-        , yDomain
+        , xWebUI
+        , yWebUI
         , xRange
         , yRange
         , dispatch = d3.dispatch('stateChange', 'changeState', 'renderEnd', 'chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
@@ -10274,14 +10274,14 @@ nv.models.ohlcBar = function() {
             var w = (availableWidth / data[0].values.length) * .9;
 
             // Setup Scales
-            x.domain(xDomain || d3.extent(data[0].values.map(getX).concat(forceX) ));
+            x.domain(xWebUI || d3.extent(data[0].values.map(getX).concat(forceX) ));
 
             if (padData)
                 x.range(xRange || [availableWidth * .5 / data[0].values.length, availableWidth * (data[0].values.length - .5)  / data[0].values.length ]);
             else
                 x.range(xRange || [5 + w/2, availableWidth - w/2 - 5]);
 
-            y.domain(yDomain || [
+            y.domain(yWebUI || [
                     d3.min(data[0].values.map(getLow).concat(forceY)),
                     d3.max(data[0].values.map(getHigh).concat(forceY))
                 ]
@@ -10422,8 +10422,8 @@ nv.models.ohlcBar = function() {
         height:   {get: function(){return height;}, set: function(_){height=_;}},
         xScale:   {get: function(){return x;}, set: function(_){x=_;}},
         yScale:   {get: function(){return y;}, set: function(_){y=_;}},
-        xDomain:  {get: function(){return xDomain;}, set: function(_){xDomain=_;}},
-        yDomain:  {get: function(){return yDomain;}, set: function(_){yDomain=_;}},
+        xWebUI:  {get: function(){return xWebUI;}, set: function(_){xWebUI=_;}},
+        yWebUI:  {get: function(){return yWebUI;}, set: function(_){yWebUI=_;}},
         xRange:   {get: function(){return xRange;}, set: function(_){xRange=_;}},
         yRange:   {get: function(){return yRange;}, set: function(_){yRange=_;}},
         forceX:   {get: function(){return forceX;}, set: function(_){forceX=_;}},
@@ -10530,7 +10530,7 @@ nv.models.parallelCoordinates = function() {
 
             //Set as true if all values on an axis are missing.
             // Extract the list of dimensions and create a scale for each.
-            var oldDomainMaxValue = {};
+            var oldWebUIMaxValue = {};
             var displayMissingValuesline = false;
             var currentTicks = [];
             
@@ -10565,7 +10565,7 @@ nv.models.parallelCoordinates = function() {
                         //If there is NaN values brushed be sure the brush extent is on the domain.
                     else if (f[0].hasNaN) {
                         max = max < f[0].extent[1] ? f[0].extent[1] : max;
-                        oldDomainMaxValue[d] = y[d].domain()[1];
+                        oldWebUIMaxValue[d] = y[d].domain()[1];
                         displayMissingValuesline = true;
                     }
                 }
@@ -10758,12 +10758,12 @@ nv.models.parallelCoordinates = function() {
             function restoreBrush(visible) {
                 filters.forEach(function (f) {
                     //If filter brushed NaN values, keep the brush on the bottom of the axis.
-                    var brushDomain = y[f.dimension].brush.y().domain();
+                    var brushWebUI = y[f.dimension].brush.y().domain();
                     if (f.hasOnlyNaN) {
-                        f.extent[1] = (y[f.dimension].domain()[1] - brushDomain[0]) * (f.extent[1] - f.extent[0]) / (oldDomainMaxValue[f.dimension] - f.extent[0]) + brushDomain[0];
+                        f.extent[1] = (y[f.dimension].domain()[1] - brushWebUI[0]) * (f.extent[1] - f.extent[0]) / (oldWebUIMaxValue[f.dimension] - f.extent[0]) + brushWebUI[0];
                     }
                     if (f.hasNaN) {
-                        f.extent[0] = brushDomain[0];
+                        f.extent[0] = brushWebUI[0];
                     }
                     if (visible)
                         y[f.dimension].brush.extent(f.extent);
@@ -12528,11 +12528,11 @@ nv.models.scatter = function() {
         , clipVoronoi  = true // if true, masks each point with a circle... can turn off to slightly increase performance
         , showVoronoi  = false // display the voronoi areas
         , clipRadius   = function() { return 25 } // function to get the radius for voronoi point clips
-        , xDomain      = null // Override x domain (skips the calculation from data)
-        , yDomain      = null // Override y domain
+        , xWebUI      = null // Override x domain (skips the calculation from data)
+        , yWebUI      = null // Override y domain
         , xRange       = null // Override x range
         , yRange       = null // Override y range
-        , sizeDomain   = null // Override point size domain
+        , sizeWebUI   = null // Override point size domain
         , sizeRange    = null
         , singlePoint  = false
         , dispatch     = d3.dispatch('elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'renderEnd')
@@ -12604,7 +12604,7 @@ nv.models.scatter = function() {
             // Setup Scales
             var logScale = chart.yScale().name === d3.scale.log().name ? true : false;
             // remap and flatten the data for use in calculating the scales' domains
-            var seriesData = (xDomain && yDomain && sizeDomain) ? [] : // if we know xDomain and yDomain and sizeDomain, no need to calculate.... if Size is constant remember to set sizeDomain to speed up performance
+            var seriesData = (xWebUI && yWebUI && sizeWebUI) ? [] : // if we know xWebUI and yWebUI and sizeWebUI, no need to calculate.... if Size is constant remember to set sizeWebUI to speed up performance
                 d3.merge(
                     data.map(function(d) {
                         return d.values.map(function(d,i) {
@@ -12613,7 +12613,7 @@ nv.models.scatter = function() {
                     })
                 );
 
-            x   .domain(xDomain || d3.extent(seriesData.map(function(d) { return d.x; }).concat(forceX)))
+            x   .domain(xWebUI || d3.extent(seriesData.map(function(d) { return d.x; }).concat(forceX)))
 
             if (padData && data[0])
                 x.range(xRange || [(availableWidth * padDataOuter +  availableWidth) / (2 *data[0].values.length), availableWidth - availableWidth * (1 + padDataOuter) / (2 * data[0].values.length)  ]);
@@ -12624,17 +12624,17 @@ nv.models.scatter = function() {
              if (logScale) {
                     var min = d3.min(seriesData.map(function(d) { if (d.y !== 0) return d.y; }));
                     y.clamp(true)
-                        .domain(yDomain || d3.extent(seriesData.map(function(d) {
+                        .domain(yWebUI || d3.extent(seriesData.map(function(d) {
                             if (d.y !== 0) return d.y;
                             else return min * 0.1;
                         }).concat(forceY)))
                         .range(yRange || [availableHeight, 0]);
                 } else {
-                        y.domain(yDomain || d3.extent(seriesData.map(function (d) { return d.y;}).concat(forceY)))
+                        y.domain(yWebUI || d3.extent(seriesData.map(function (d) { return d.y;}).concat(forceY)))
                         .range(yRange || [availableHeight, 0]);
                 }
 
-            z   .domain(sizeDomain || d3.extent(seriesData.map(function(d) { return d.size }).concat(forceSize)))
+            z   .domain(sizeWebUI || d3.extent(seriesData.map(function(d) { return d.size }).concat(forceSize)))
                 .range(sizeRange || _sizeRange_def);
 
             // If scale's domain don't have a range, slightly adjust to make one... so a chart can show a single data point
@@ -13085,9 +13085,9 @@ nv.models.scatter = function() {
         xScale:       {get: function(){return x;}, set: function(_){x=_;}},
         yScale:       {get: function(){return y;}, set: function(_){y=_;}},
         pointScale:   {get: function(){return z;}, set: function(_){z=_;}},
-        xDomain:      {get: function(){return xDomain;}, set: function(_){xDomain=_;}},
-        yDomain:      {get: function(){return yDomain;}, set: function(_){yDomain=_;}},
-        pointDomain:  {get: function(){return sizeDomain;}, set: function(_){sizeDomain=_;}},
+        xWebUI:      {get: function(){return xWebUI;}, set: function(_){xWebUI=_;}},
+        yWebUI:      {get: function(){return yWebUI;}, set: function(_){yWebUI=_;}},
+        pointWebUI:  {get: function(){return sizeWebUI;}, set: function(_){sizeWebUI=_;}},
         xRange:       {get: function(){return xRange;}, set: function(_){xRange=_;}},
         yRange:       {get: function(){return yRange;}, set: function(_){yRange=_;}},
         pointRange:   {get: function(){return sizeRange;}, set: function(_){sizeRange=_;}},
@@ -13549,8 +13549,8 @@ nv.models.sparkline = function() {
         , getX = function(d) { return d.x }
         , getY = function(d) { return d.y }
         , color = nv.utils.getColor(['#000'])
-        , xDomain
-        , yDomain
+        , xWebUI
+        , yWebUI
         , xRange
         , yRange
         , showMinMaxPoints = true
@@ -13574,10 +13574,10 @@ nv.models.sparkline = function() {
             nv.utils.initSVG(container);
 
             // Setup Scales
-            x   .domain(xDomain || d3.extent(data, getX ))
+            x   .domain(xWebUI || d3.extent(data, getX ))
                 .range(xRange || [0, availableWidth]);
 
-            y   .domain(yDomain || d3.extent(data, getY ))
+            y   .domain(yWebUI || d3.extent(data, getY ))
                 .range(yRange || [availableHeight, 0]);
 
             // Setup containers and skeleton of chart
@@ -13643,8 +13643,8 @@ nv.models.sparkline = function() {
         // simple options, just get/set the necessary values
         width:            {get: function(){return width;}, set: function(_){width=_;}},
         height:           {get: function(){return height;}, set: function(_){height=_;}},
-        xDomain:          {get: function(){return xDomain;}, set: function(_){xDomain=_;}},
-        yDomain:          {get: function(){return yDomain;}, set: function(_){yDomain=_;}},
+        xWebUI:          {get: function(){return xWebUI;}, set: function(_){xWebUI=_;}},
+        yWebUI:          {get: function(){return yWebUI;}, set: function(_){yWebUI=_;}},
         xRange:           {get: function(){return xRange;}, set: function(_){xRange=_;}},
         yRange:           {get: function(){return yRange;}, set: function(_){yRange=_;}},
         xScale:           {get: function(){return x;}, set: function(_){x=_;}},
@@ -13921,7 +13921,7 @@ nv.models.stackedArea = function() {
 
     scatter
         .pointSize(2.2) // default size
-        .pointDomain([2.2, 2.2]) // all the same size by default
+        .pointWebUI([2.2, 2.2]) // all the same size by default
     ;
 
     /************************************
@@ -14572,7 +14572,7 @@ nv.models.stackedAreaChart = function() {
                     .attr('transform', 'translate(0,' + ( availableHeight + margin.bottom + focus.margin().top) + ')')
                     .datum(data.filter(function(d) { return !d.disabled; }))
                     .call(focus);
-                var extent = focus.brush.empty() ? focus.xDomain() : focus.brush.extent();
+                var extent = focus.brush.empty() ? focus.xWebUI() : focus.brush.extent();
                 if(extent !== null){
                     onBrush(extent);
                 }

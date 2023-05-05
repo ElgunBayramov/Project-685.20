@@ -103,7 +103,7 @@ var ceil10 = function (v) {
 var asHalfPixel = function (n) {
     return Math.ceil(n) + 0.5;
 };
-var diffDomain = function (d) {
+var diffWebUI = function (d) {
     return d[1] - d[0];
 };
 var isEmpty = function (o) {
@@ -739,13 +739,13 @@ Axis.prototype.getMaxTickWidth = function getMaxTickWidth(id, withoutRecompute) 
     if ($$.svg) {
         targetsToShow = $$.filterTargetsToShow($$.data.targets);
         if (id === 'y') {
-            scale = $$.y.copy().domain($$.getYDomain(targetsToShow, 'y'));
+            scale = $$.y.copy().domain($$.getYWebUI(targetsToShow, 'y'));
             axis = this.getYAxis(scale, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, false, true, true);
         } else if (id === 'y2') {
-            scale = $$.y2.copy().domain($$.getYDomain(targetsToShow, 'y2'));
+            scale = $$.y2.copy().domain($$.getYWebUI(targetsToShow, 'y2'));
             axis = this.getYAxis(scale, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, false, true, true);
         } else {
-            scale = $$.x.copy().domain($$.getXDomain(targetsToShow));
+            scale = $$.x.copy().domain($$.getXWebUI(targetsToShow));
             axis = this.getXAxis(scale, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, false, true, true);
             this.updateXAxisTickValues(targetsToShow, axis);
         }
@@ -1081,15 +1081,15 @@ c3_chart_internal_fn.initWithData = function (data) {
     $$.updateScales();
 
     // Set domains for each scale
-    $$.x.domain(d3.extent($$.getXDomain($$.data.targets)));
-    $$.y.domain($$.getYDomain($$.data.targets, 'y'));
-    $$.y2.domain($$.getYDomain($$.data.targets, 'y2'));
+    $$.x.domain(d3.extent($$.getXWebUI($$.data.targets)));
+    $$.y.domain($$.getYWebUI($$.data.targets, 'y'));
+    $$.y2.domain($$.getYWebUI($$.data.targets, 'y2'));
     $$.subX.domain($$.x.domain());
     $$.subY.domain($$.y.domain());
     $$.subY2.domain($$.y2.domain());
 
     // Save original x domain for zoom update
-    $$.orgXDomain = $$.x.domain();
+    $$.orgXWebUI = $$.x.domain();
 
     // Set initialized scales to brush and zoom
     if ($$.brush) { $$.brush.scale($$.subX); }
@@ -1177,8 +1177,8 @@ c3_chart_internal_fn.initWithData = function (data) {
         $$.redraw({
             withTransition: false,
             withTransform: true,
-            withUpdateXDomain: true,
-            withUpdateOrgXDomain: true,
+            withUpdateXWebUI: true,
+            withUpdateOrgXWebUI: true,
             withTransitionForAxis: false
         });
     }
@@ -1315,13 +1315,13 @@ c3_chart_internal_fn.redraw = function (options, transitions) {
     var $$ = this, main = $$.main, d3 = $$.d3, config = $$.config;
     var areaIndices = $$.getShapeIndices($$.isAreaType), barIndices = $$.getShapeIndices($$.isBarType), lineIndices = $$.getShapeIndices($$.isLineType);
     var withY, withSubchart, withTransition, withTransitionForExit, withTransitionForAxis,
-        withTransform, withUpdateXDomain, withUpdateOrgXDomain, withTrimXDomain, withLegend,
+        withTransform, withUpdateXWebUI, withUpdateOrgXWebUI, withTrimXWebUI, withLegend,
         withEventRect, withDimension, withUpdateXAxis;
     var hideAxis = $$.hasArcType();
     var drawArea, drawBar, drawLine, xForText, yForText;
     var duration, durationForExit, durationForAxis;
     var waitForDraw, flow;
-    var targetsToShow = $$.filterTargetsToShow($$.data.targets), tickValues, i, intervalForCulling, xDomainForZoom;
+    var targetsToShow = $$.filterTargetsToShow($$.data.targets), tickValues, i, intervalForCulling, xWebUIForZoom;
     var xv = $$.xv.bind($$), cx, cy;
 
     options = options || {};
@@ -1329,10 +1329,10 @@ c3_chart_internal_fn.redraw = function (options, transitions) {
     withSubchart = getOption(options, "withSubchart", true);
     withTransition = getOption(options, "withTransition", true);
     withTransform = getOption(options, "withTransform", false);
-    withUpdateXDomain = getOption(options, "withUpdateXDomain", false);
-    withUpdateOrgXDomain = getOption(options, "withUpdateOrgXDomain", false);
-    withTrimXDomain = getOption(options, "withTrimXDomain", true);
-    withUpdateXAxis = getOption(options, "withUpdateXAxis", withUpdateXDomain);
+    withUpdateXWebUI = getOption(options, "withUpdateXWebUI", false);
+    withUpdateOrgXWebUI = getOption(options, "withUpdateOrgXWebUI", false);
+    withTrimXWebUI = getOption(options, "withTrimXWebUI", true);
+    withUpdateXAxis = getOption(options, "withUpdateXAxis", withUpdateXWebUI);
     withLegend = getOption(options, "withLegend", false);
     withEventRect = getOption(options, "withEventRect", true);
     withDimension = getOption(options, "withDimension", true);
@@ -1360,7 +1360,7 @@ c3_chart_internal_fn.redraw = function (options, transitions) {
     }
 
     if (targetsToShow.length) {
-        $$.updateXDomain(targetsToShow, withUpdateXDomain, withUpdateOrgXDomain, withTrimXDomain);
+        $$.updateXWebUI(targetsToShow, withUpdateXWebUI, withUpdateOrgXWebUI, withTrimXWebUI);
         if (!config.axis_x_tick_values) {
             tickValues = $$.axis.updateXAxisTickValues(targetsToShow);
         }
@@ -1370,11 +1370,11 @@ c3_chart_internal_fn.redraw = function (options, transitions) {
     }
 
     if (config.zoom_rescale && !options.flow) {
-        xDomainForZoom = $$.x.orgDomain();
+        xWebUIForZoom = $$.x.orgWebUI();
     }
 
-    $$.y.domain($$.getYDomain(targetsToShow, 'y', xDomainForZoom));
-    $$.y2.domain($$.getYDomain(targetsToShow, 'y2', xDomainForZoom));
+    $$.y.domain($$.getYWebUI(targetsToShow, 'y', xWebUIForZoom));
+    $$.y2.domain($$.getYWebUI(targetsToShow, 'y2', xWebUIForZoom));
 
     if (!config.axis_y_tick_values && config.axis_y_tick_count) {
         $$.yAxis.tickValues($$.axis.generateTickValues($$.y.domain(), config.axis_y_tick_count));
@@ -1390,7 +1390,7 @@ c3_chart_internal_fn.redraw = function (options, transitions) {
     $$.axis.updateLabels(withTransition);
 
     // show/hide if manual culling needed
-    if ((withUpdateXDomain || withUpdateXAxis) && targetsToShow.length) {
+    if ((withUpdateXWebUI || withUpdateXAxis) && targetsToShow.length) {
         if (config.axis_x_tick_culling && tickValues) {
             for (i = 1; i < tickValues.length; i++) {
                 if (tickValues.length / i < config.axis_x_tick_culling_max) {
@@ -1418,8 +1418,8 @@ c3_chart_internal_fn.redraw = function (options, transitions) {
 
     // Update sub domain
     if (withY) {
-        $$.subY.domain($$.getYDomain(targetsToShow, 'y'));
-        $$.subY2.domain($$.getYDomain(targetsToShow, 'y2'));
+        $$.subY.domain($$.getYWebUI(targetsToShow, 'y'));
+        $$.subY2.domain($$.getYWebUI(targetsToShow, 'y2'));
     }
 
     // xgrid focus
@@ -1560,8 +1560,8 @@ c3_chart_internal_fn.updateAndRedraw = function (options) {
     options.withTransform = getOption(options, "withTransform", false);
     options.withLegend = getOption(options, "withLegend", false);
     // NOT same with redraw
-    options.withUpdateXDomain = true;
-    options.withUpdateOrgXDomain = true;
+    options.withUpdateXWebUI = true;
+    options.withUpdateOrgXWebUI = true;
     options.withTransitionForExit = false;
     options.withTransitionForTransform = getOption(options, "withTransitionForTransform", options.withTransition);
     // MEMO: this needs to be called before updateLegend and it means this ALWAYS needs to be called)
@@ -1765,8 +1765,8 @@ c3_chart_internal_fn.observeInserted = function (selection) {
                         $$.config.oninit.call($$);
                         $$.redraw({
                             withTransform: true,
-                            withUpdateXDomain: true,
-                            withUpdateOrgXDomain: true,
+                            withUpdateXWebUI: true,
+                            withUpdateOrgXWebUI: true,
                             withTransition: false,
                             withTransitionForTransform: false,
                             withLegend: true
@@ -1920,7 +1920,7 @@ c3_chart_internal_fn.isUndefined = isUndefined;
 c3_chart_internal_fn.isDefined = isDefined;
 c3_chart_internal_fn.ceil10 = ceil10;
 c3_chart_internal_fn.asHalfPixel = asHalfPixel;
-c3_chart_internal_fn.diffDomain = diffDomain;
+c3_chart_internal_fn.diffWebUI = diffWebUI;
 c3_chart_internal_fn.isEmpty = isEmpty;
 c3_chart_internal_fn.notEmpty = notEmpty;
 c3_chart_internal_fn.notEmpty = notEmpty;
@@ -2826,7 +2826,7 @@ c3_chart_fn.axis.max = function (max) {
         } else {
             config.axis_y_max = config.axis_y2_max = max;
         }
-        $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true});
+        $$.redraw({withUpdateOrgXWebUI: true, withUpdateXWebUI: true});
     } else {
         return {
             x: config.axis_x_max,
@@ -2845,7 +2845,7 @@ c3_chart_fn.axis.min = function (min) {
         } else {
             config.axis_y_min = config.axis_y2_min = min;
         }
-        $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true});
+        $$.redraw({withUpdateOrgXWebUI: true, withUpdateXWebUI: true});
     } else {
         return {
             x: config.axis_x_min,
@@ -3068,18 +3068,18 @@ c3_chart_fn.flow = function (args) {
             if (baseTarget.values.length > 1) {
                 diff = baseTarget.values[baseTarget.values.length - 1].x - baseValue.x;
             } else {
-                diff = baseValue.x - $$.getXDomain($$.data.targets)[0];
+                diff = baseValue.x - $$.getXWebUI($$.data.targets)[0];
             }
         } else {
             diff = 1;
         }
         domain = [baseValue.x - diff, baseValue.x];
-        $$.updateXDomain(null, true, true, false, domain);
+        $$.updateXWebUI(null, true, true, false, domain);
     } else if (orgDataCount === 1) {
         if ($$.isTimeSeries()) {
             diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
             domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
-            $$.updateXDomain(null, true, true, false, domain);
+            $$.updateXWebUI(null, true, true, false, domain);
         }
     }
 
@@ -3097,7 +3097,7 @@ c3_chart_fn.flow = function (args) {
         },
         withLegend: true,
         withTransition: orgDataCount > 1,
-        withTrimXDomain: false,
+        withTrimXWebUI: false,
         withUpdateXAxis: true,
     });
 };
@@ -3123,7 +3123,7 @@ c3_chart_internal_fn.generateFlow = function (args) {
             flowLength = flow.length,
             flowStart = $$.getValueOnIndex($$.data.targets[0].values, flowIndex),
             flowEnd = $$.getValueOnIndex($$.data.targets[0].values, flowIndex + flowLength),
-            orgDomain = $$.x.domain(), domain,
+            orgWebUI = $$.x.domain(), domain,
             durationForFlow = flow.duration || duration,
             done = flow.done || function () {},
             wait = $$.generateWait();
@@ -3146,33 +3146,33 @@ c3_chart_internal_fn.generateFlow = function (args) {
         });
 
         // update x domain to generate axis elements for flow
-        domain = $$.updateXDomain(targets, true, true);
+        domain = $$.updateXWebUI(targets, true, true);
         // update elements related to x scale
         if ($$.updateXGrid) { $$.updateXGrid(true); }
 
         // generate transform to flow
         if (!flow.orgDataCount) { // if empty
             if ($$.data.targets[0].values.length !== 1) {
-                translateX = $$.x(orgDomain[0]) - $$.x(domain[0]);
+                translateX = $$.x(orgWebUI[0]) - $$.x(domain[0]);
             } else {
                 if ($$.isTimeSeries()) {
                     flowStart = $$.getValueOnIndex($$.data.targets[0].values, 0);
                     flowEnd = $$.getValueOnIndex($$.data.targets[0].values, $$.data.targets[0].values.length - 1);
                     translateX = $$.x(flowStart.x) - $$.x(flowEnd.x);
                 } else {
-                    translateX = diffDomain(domain) / 2;
+                    translateX = diffWebUI(domain) / 2;
                 }
             }
         } else if (flow.orgDataCount === 1 || (flowStart && flowStart.x) === (flowEnd && flowEnd.x)) {
-            translateX = $$.x(orgDomain[0]) - $$.x(domain[0]);
+            translateX = $$.x(orgWebUI[0]) - $$.x(domain[0]);
         } else {
             if ($$.isTimeSeries()) {
-                translateX = ($$.x(orgDomain[0]) - $$.x(domain[0]));
+                translateX = ($$.x(orgWebUI[0]) - $$.x(domain[0]));
             } else {
                 translateX = ($$.x(flowStart.x) - $$.x(flowEnd.x));
             }
         }
-        scaleX = (diffDomain(orgDomain) / diffDomain(domain));
+        scaleX = (diffWebUI(orgWebUI) / diffWebUI(domain));
         transform = 'translate(' + translateX + ',0) scale(' + scaleX + ',1)';
 
         $$.hideXGridFocus();
@@ -3422,7 +3422,7 @@ c3_chart_fn.unload = function (args) {
         args = {ids: [args]};
     }
     $$.unload($$.mapToTargetIds(args.ids), function () {
-        $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true, withLegend: true});
+        $$.redraw({withUpdateOrgXWebUI: true, withUpdateXWebUI: true, withLegend: true});
         if (args.done) { args.done(); }
     });
 };
@@ -3542,7 +3542,7 @@ c3_chart_fn.show = function (targetIds, options) {
         $$.showLegend(targetIds);
     }
 
-    $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true, withLegend: true});
+    $$.redraw({withUpdateOrgXWebUI: true, withUpdateXWebUI: true, withLegend: true});
 };
 
 c3_chart_fn.hide = function (targetIds, options) {
@@ -3564,7 +3564,7 @@ c3_chart_fn.hide = function (targetIds, options) {
         $$.hideLegend(targetIds);
     }
 
-    $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true, withLegend: true});
+    $$.redraw({withUpdateOrgXWebUI: true, withUpdateXWebUI: true, withLegend: true});
 };
 
 c3_chart_fn.toggle = function (targetIds, options) {
@@ -3635,7 +3635,7 @@ c3_chart_fn.x = function (x) {
     var $$ = this.internal;
     if (arguments.length) {
         $$.updateTargetX($$.data.targets, x);
-        $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true});
+        $$.redraw({withUpdateOrgXWebUI: true, withUpdateXWebUI: true});
     }
     return $$.data.xs;
 };
@@ -3643,7 +3643,7 @@ c3_chart_fn.xs = function (xs) {
     var $$ = this.internal;
     if (arguments.length) {
         $$.updateTargetXs($$.data.targets, xs);
-        $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true});
+        $$.redraw({withUpdateOrgXWebUI: true, withUpdateXWebUI: true});
     }
     return $$.data.xs;
 };
@@ -3655,8 +3655,8 @@ c3_chart_fn.zoom = function (domain) {
             domain = domain.map(function (x) { return $$.parseDate(x); });
         }
         $$.brush.extent(domain);
-        $$.redraw({withUpdateXDomain: true, withY: $$.config.zoom_rescale});
-        $$.config.zoom_onzoom.call(this, $$.x.orgDomain());
+        $$.redraw({withUpdateXWebUI: true, withY: $$.config.zoom_rescale});
+        $$.config.zoom_onzoom.call(this, $$.x.orgWebUI());
     }
     return $$.brush.extent();
 };
@@ -3668,13 +3668,13 @@ c3_chart_fn.zoom.enable = function (enabled) {
 c3_chart_fn.unzoom = function () {
     var $$ = this.internal;
     $$.brush.clear().update();
-    $$.redraw({withUpdateXDomain: true});
+    $$.redraw({withUpdateXWebUI: true});
 };
 
 c3_chart_fn.zoom.max = function (max) {
     var $$ = this.internal, config = $$.config, d3 = $$.d3;
     if (max === 0 || max) {
-        config.zoom_x_max = d3.max([$$.orgXDomain[1], max]);
+        config.zoom_x_max = d3.max([$$.orgXWebUI[1], max]);
     }
     else {
         return config.zoom_x_max;
@@ -3684,7 +3684,7 @@ c3_chart_fn.zoom.max = function (max) {
 c3_chart_fn.zoom.min = function (min) {
     var $$ = this.internal, config = $$.config, d3 = $$.d3;
     if (min === 0 || min) {
-        config.zoom_x_min = d3.min([$$.orgXDomain[0], min]);
+        config.zoom_x_min = d3.min([$$.orgXWebUI[0], min]);
     }
     else {
         return config.zoom_x_min;
@@ -5116,13 +5116,13 @@ c3_chart_internal_fn.filterByX = function (targets, x) {
 c3_chart_internal_fn.filterRemoveNull = function (data) {
     return data.filter(function (d) { return isValue(d.value); });
 };
-c3_chart_internal_fn.filterByXDomain = function (targets, xDomain) {
+c3_chart_internal_fn.filterByXWebUI = function (targets, xWebUI) {
     return targets.map(function (t) {
         return {
             id: t.id,
             id_org: t.id_org,
             values: t.values.filter(function (v) {
-                return xDomain[0] <= v.x && v.x <= xDomain[1];
+                return xWebUI[0] <= v.x && v.x <= xWebUI[1];
             })
         };
     });
@@ -5274,7 +5274,7 @@ c3_chart_internal_fn.load = function (targets, args) {
     $$.updateTargets($$.data.targets);
 
     // Redraw with new targets
-    $$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true, withLegend: true});
+    $$.redraw({withUpdateOrgXWebUI: true, withUpdateXWebUI: true, withLegend: true});
 
     if (args.done) { args.done(); }
 };
@@ -5332,7 +5332,7 @@ c3_chart_internal_fn.unload = function (targetIds, done) {
     });
 };
 
-c3_chart_internal_fn.getYDomainMin = function (targets) {
+c3_chart_internal_fn.getYWebUIMin = function (targets) {
     var $$ = this, config = $$.config,
         ids = $$.mapToIds(targets), ys = $$.getValuesAsIdKeyed(targets),
         j, k, baseId, idsInGroup, id, hasNegativeValue;
@@ -5363,7 +5363,7 @@ c3_chart_internal_fn.getYDomainMin = function (targets) {
     }
     return $$.d3.min(Object.keys(ys).map(function (key) { return $$.d3.min(ys[key]); }));
 };
-c3_chart_internal_fn.getYDomainMax = function (targets) {
+c3_chart_internal_fn.getYWebUIMax = function (targets) {
     var $$ = this, config = $$.config,
         ids = $$.mapToIds(targets), ys = $$.getValuesAsIdKeyed(targets),
         j, k, baseId, idsInGroup, id, hasPositiveValue;
@@ -5394,40 +5394,40 @@ c3_chart_internal_fn.getYDomainMax = function (targets) {
     }
     return $$.d3.max(Object.keys(ys).map(function (key) { return $$.d3.max(ys[key]); }));
 };
-c3_chart_internal_fn.getYDomain = function (targets, axisId, xDomain) {
+c3_chart_internal_fn.getYWebUI = function (targets, axisId, xWebUI) {
     var $$ = this, config = $$.config,
         targetsByAxisId = targets.filter(function (t) { return $$.axis.getId(t.id) === axisId; }),
-        yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId,
+        yTargets = xWebUI ? $$.filterByXWebUI(targetsByAxisId, xWebUI) : targetsByAxisId,
         yMin = axisId === 'y2' ? config.axis_y2_min : config.axis_y_min,
         yMax = axisId === 'y2' ? config.axis_y2_max : config.axis_y_max,
-        yDomainMin = $$.getYDomainMin(yTargets),
-        yDomainMax = $$.getYDomainMax(yTargets),
+        yWebUIMin = $$.getYWebUIMin(yTargets),
+        yWebUIMax = $$.getYWebUIMax(yTargets),
         domain, domainLength, padding, padding_top, padding_bottom,
         center = axisId === 'y2' ? config.axis_y2_center : config.axis_y_center,
-        yDomainAbs, lengths, diff, ratio, isAllPositive, isAllNegative,
+        yWebUIAbs, lengths, diff, ratio, isAllPositive, isAllNegative,
         isZeroBased = ($$.hasType('bar', yTargets) && config.bar_zerobased) || ($$.hasType('area', yTargets) && config.area_zerobased),
         isInverted = axisId === 'y2' ? config.axis_y2_inverted : config.axis_y_inverted,
         showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
         showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
 
     // MEMO: avoid inverting domain unexpectedly
-    yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? (yDomainMin < yMax ? yDomainMin : yMax - 10) : yDomainMin;
-    yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? (yMin < yDomainMax ? yDomainMax : yMin + 10) : yDomainMax;
+    yWebUIMin = isValue(yMin) ? yMin : isValue(yMax) ? (yWebUIMin < yMax ? yWebUIMin : yMax - 10) : yWebUIMin;
+    yWebUIMax = isValue(yMax) ? yMax : isValue(yMin) ? (yMin < yWebUIMax ? yWebUIMax : yMin + 10) : yWebUIMax;
 
     if (yTargets.length === 0) { // use current domain if target of axisId is none
         return axisId === 'y2' ? $$.y2.domain() : $$.y.domain();
     }
-    if (isNaN(yDomainMin)) { // set minimum to zero when not number
-        yDomainMin = 0;
+    if (isNaN(yWebUIMin)) { // set minimum to zero when not number
+        yWebUIMin = 0;
     }
-    if (isNaN(yDomainMax)) { // set maximum to have same value as yDomainMin
-        yDomainMax = yDomainMin;
+    if (isNaN(yWebUIMax)) { // set maximum to have same value as yWebUIMin
+        yWebUIMax = yWebUIMin;
     }
-    if (yDomainMin === yDomainMax) {
-        yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0;
+    if (yWebUIMin === yWebUIMax) {
+        yWebUIMin < 0 ? yWebUIMax = 0 : yWebUIMin = 0;
     }
-    isAllPositive = yDomainMin >= 0 && yDomainMax >= 0;
-    isAllNegative = yDomainMin <= 0 && yDomainMax <= 0;
+    isAllPositive = yWebUIMin >= 0 && yWebUIMax >= 0;
+    isAllNegative = yWebUIMin <= 0 && yWebUIMax <= 0;
 
     // Cancel zerobased if axis_*_min / axis_*_max specified
     if ((isValue(yMin) && isAllPositive) || (isValue(yMax) && isAllNegative)) {
@@ -5436,27 +5436,27 @@ c3_chart_internal_fn.getYDomain = function (targets, axisId, xDomain) {
 
     // Bar/Area chart should be 0-based if all positive|negative
     if (isZeroBased) {
-        if (isAllPositive) { yDomainMin = 0; }
-        if (isAllNegative) { yDomainMax = 0; }
+        if (isAllPositive) { yWebUIMin = 0; }
+        if (isAllNegative) { yWebUIMax = 0; }
     }
 
-    domainLength = Math.abs(yDomainMax - yDomainMin);
+    domainLength = Math.abs(yWebUIMax - yWebUIMin);
     padding = padding_top = padding_bottom = domainLength * 0.1;
 
     if (typeof center !== 'undefined') {
-        yDomainAbs = Math.max(Math.abs(yDomainMin), Math.abs(yDomainMax));
-        yDomainMax = center + yDomainAbs;
-        yDomainMin = center - yDomainAbs;
+        yWebUIAbs = Math.max(Math.abs(yWebUIMin), Math.abs(yWebUIMax));
+        yWebUIMax = center + yWebUIAbs;
+        yWebUIMin = center - yWebUIAbs;
     }
     // add padding for data label
     if (showHorizontalDataLabel) {
-        lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, 'width');
-        diff = diffDomain($$.y.range());
+        lengths = $$.getDataLabelLength(yWebUIMin, yWebUIMax, 'width');
+        diff = diffWebUI($$.y.range());
         ratio = [lengths[0] / diff, lengths[1] / diff];
         padding_top += domainLength * (ratio[1] / (1 - ratio[0] - ratio[1]));
         padding_bottom += domainLength * (ratio[0] / (1 - ratio[0] - ratio[1]));
     } else if (showVerticalDataLabel) {
-        lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, 'height');
+        lengths = $$.getDataLabelLength(yWebUIMin, yWebUIMax, 'height');
         padding_top += $$.axis.convertPixelsToAxisPadding(lengths[1], domainLength);
         padding_bottom += $$.axis.convertPixelsToAxisPadding(lengths[0], domainLength);
     }
@@ -5470,25 +5470,25 @@ c3_chart_internal_fn.getYDomain = function (targets, axisId, xDomain) {
     }
     // Bar/Area chart should be 0-based if all positive|negative
     if (isZeroBased) {
-        if (isAllPositive) { padding_bottom = yDomainMin; }
-        if (isAllNegative) { padding_top = -yDomainMax; }
+        if (isAllPositive) { padding_bottom = yWebUIMin; }
+        if (isAllNegative) { padding_top = -yWebUIMax; }
     }
-    domain = [yDomainMin - padding_bottom, yDomainMax + padding_top];
+    domain = [yWebUIMin - padding_bottom, yWebUIMax + padding_top];
     return isInverted ? domain.reverse() : domain;
 };
-c3_chart_internal_fn.getXDomainMin = function (targets) {
+c3_chart_internal_fn.getXWebUIMin = function (targets) {
     var $$ = this, config = $$.config;
     return isDefined(config.axis_x_min) ?
         ($$.isTimeSeries() ? this.parseDate(config.axis_x_min) : config.axis_x_min) :
     $$.d3.min(targets, function (t) { return $$.d3.min(t.values, function (v) { return v.x; }); });
 };
-c3_chart_internal_fn.getXDomainMax = function (targets) {
+c3_chart_internal_fn.getXWebUIMax = function (targets) {
     var $$ = this, config = $$.config;
     return isDefined(config.axis_x_max) ?
         ($$.isTimeSeries() ? this.parseDate(config.axis_x_max) : config.axis_x_max) :
     $$.d3.max(targets, function (t) { return $$.d3.max(t.values, function (v) { return v.x; }); });
 };
-c3_chart_internal_fn.getXDomainPadding = function (domain) {
+c3_chart_internal_fn.getXWebUIPadding = function (domain) {
     var $$ = this, config = $$.config,
         diff = domain[1] - domain[0],
         maxDataCount, padding, paddingLeft, paddingRight;
@@ -5510,11 +5510,11 @@ c3_chart_internal_fn.getXDomainPadding = function (domain) {
     }
     return {left: paddingLeft, right: paddingRight};
 };
-c3_chart_internal_fn.getXDomain = function (targets) {
+c3_chart_internal_fn.getXWebUI = function (targets) {
     var $$ = this,
-        xDomain = [$$.getXDomainMin(targets), $$.getXDomainMax(targets)],
-        firstX = xDomain[0], lastX = xDomain[1],
-        padding = $$.getXDomainPadding(xDomain),
+        xWebUI = [$$.getXWebUIMin(targets), $$.getXWebUIMax(targets)],
+        firstX = xWebUI[0], lastX = xWebUI[1],
+        padding = $$.getXWebUIPadding(xWebUI),
         min = 0, max = 0;
     // show center of x domain if min and max are the same
     if ((firstX - lastX) === 0 && !$$.isCategorized()) {
@@ -5534,29 +5534,29 @@ c3_chart_internal_fn.getXDomain = function (targets) {
     }
     return [min, max];
 };
-c3_chart_internal_fn.updateXDomain = function (targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
+c3_chart_internal_fn.updateXWebUI = function (targets, withUpdateXWebUI, withUpdateOrgXWebUI, withTrim, domain) {
     var $$ = this, config = $$.config;
 
-    if (withUpdateOrgXDomain) {
-        $$.x.domain(domain ? domain : $$.d3.extent($$.getXDomain(targets)));
-        $$.orgXDomain = $$.x.domain();
+    if (withUpdateOrgXWebUI) {
+        $$.x.domain(domain ? domain : $$.d3.extent($$.getXWebUI(targets)));
+        $$.orgXWebUI = $$.x.domain();
         if (config.zoom_enabled) { $$.zoom.scale($$.x).updateScaleExtent(); }
         $$.subX.domain($$.x.domain());
         if ($$.brush) { $$.brush.scale($$.subX); }
     }
-    if (withUpdateXDomain) {
-        $$.x.domain(domain ? domain : (!$$.brush || $$.brush.empty()) ? $$.orgXDomain : $$.brush.extent());
+    if (withUpdateXWebUI) {
+        $$.x.domain(domain ? domain : (!$$.brush || $$.brush.empty()) ? $$.orgXWebUI : $$.brush.extent());
         if (config.zoom_enabled) { $$.zoom.scale($$.x).updateScaleExtent(); }
     }
 
     // Trim domain when too big by zoom mousemove event
-    if (withTrim) { $$.x.domain($$.trimXDomain($$.x.orgDomain())); }
+    if (withTrim) { $$.x.domain($$.trimXWebUI($$.x.orgWebUI())); }
 
     return $$.x.domain();
 };
-c3_chart_internal_fn.trimXDomain = function (domain) {
-    var zoomDomain = this.getZoomDomain(),
-        min = zoomDomain[0], max = zoomDomain[1];
+c3_chart_internal_fn.trimXWebUI = function (domain) {
+    var zoomWebUI = this.getZoomWebUI(),
+        min = zoomWebUI[0], max = zoomWebUI[1];
     if (domain[0] <= min) {
         domain[1] = +domain[1] + (min - domain[0]);
         domain[0] = min;
@@ -5574,7 +5574,7 @@ c3_chart_internal_fn.drag = function (mouse) {
 
     if ($$.hasArcType()) { return; }
     if (! config.data_selection_enabled) { return; } // do nothing if not selectable
-    if (config.zoom_enabled && ! $$.zoom.altDomain) { return; } // skip if zoomable because of conflict drag dehavior
+    if (config.zoom_enabled && ! $$.zoom.altWebUI) { return; } // skip if zoomable because of conflict drag dehavior
     if (!config.data_selection_multiple) { return; } // skip when single selection because drag is used for multiple selection
 
     sx = $$.dragStart[0];
@@ -5890,12 +5890,12 @@ c3_chart_internal_fn.updateXgridFocus = function () {
 };
 c3_chart_internal_fn.generateGridData = function (type, scale) {
     var $$ = this,
-        gridData = [], xDomain, firstYear, lastYear, i,
+        gridData = [], xWebUI, firstYear, lastYear, i,
         tickNum = $$.main.select("." + CLASS.axisX).selectAll('.tick').size();
     if (type === 'year') {
-        xDomain = $$.getXDomain();
-        firstYear = xDomain[0].getFullYear();
-        lastYear = xDomain[1].getFullYear();
+        xWebUI = $$.getXWebUI();
+        firstYear = xWebUI[0].getFullYear();
+        lastYear = xWebUI[1].getFullYear();
         for (i = firstYear; i <= lastYear; i++) {
             gridData.push(new Date(i + '-01-01 00:00:00'));
         }
@@ -6724,14 +6724,14 @@ c3_chart_internal_fn.getX = function (min, max, domain, offset) {
     for (key in _scale) {
         scale[key] = _scale[key];
     }
-    scale.orgDomain = function () {
+    scale.orgWebUI = function () {
         return _scale.domain();
     };
     // define custom domain() for categorized axis
     if ($$.isCategorized()) {
         scale.domain = function (domain) {
             if (!arguments.length) {
-                domain = this.orgDomain();
+                domain = this.orgWebUI();
                 return [domain[0], domain[1] + 1];
             }
             _scale.domain(domain);
@@ -6764,10 +6764,10 @@ c3_chart_internal_fn.updateScales = function () {
     $$.subYMin = config.axis_rotated ? 0 : $$.height2;
     $$.subYMax = config.axis_rotated ? $$.width2 : 1;
     // update scales
-    $$.x = $$.getX($$.xMin, $$.xMax, forInit ? undefined : $$.x.orgDomain(), function () { return $$.xAxis.tickOffset(); });
+    $$.x = $$.getX($$.xMin, $$.xMax, forInit ? undefined : $$.x.orgWebUI(), function () { return $$.xAxis.tickOffset(); });
     $$.y = $$.getY($$.yMin, $$.yMax, forInit ? config.axis_y_default : $$.y.domain());
     $$.y2 = $$.getY($$.yMin, $$.yMax, forInit ? config.axis_y2_default : $$.y2.domain());
-    $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, function (d) { return d % 1 ? 0 : $$.subXAxis.tickOffset(); });
+    $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXWebUI, function (d) { return d % 1 ? 0 : $$.subXAxis.tickOffset(); });
     $$.subY = $$.getY($$.subYMin, $$.subYMax, forInit ? config.axis_y_default : $$.subY.domain());
     $$.subY2 = $$.getY($$.subYMin, $$.subYMax, forInit ? config.axis_y2_default : $$.subY2.domain());
     // update axes
@@ -7730,14 +7730,14 @@ c3_chart_internal_fn.redrawSubchart = function (withSubchart, transitions, durat
     if (config.subchart_show) {
         // reflect main chart to extent on subchart if zoomed
         if (d3.event && d3.event.type === 'zoom') {
-            $$.brush.extent($$.x.orgDomain()).update();
+            $$.brush.extent($$.x.orgWebUI()).update();
         }
         // update subchart elements if needed
         if (withSubchart) {
 
             // extent rect
             if (!$$.brush.empty()) {
-                $$.brush.extent($$.x.orgDomain()).update();
+                $$.brush.extent($$.x.orgWebUI()).update();
             }
             // setup drawer - MEMO: this must be called after axis updated
             drawAreaOnSub = $$.generateDrawArea(areaIndices, true);
@@ -7760,10 +7760,10 @@ c3_chart_internal_fn.redrawForBrush = function () {
         withTransition: false,
         withY: $$.config.zoom_rescale,
         withSubchart: false,
-        withUpdateXDomain: true,
+        withUpdateXWebUI: true,
         withDimension: false
     });
-    $$.config.subchart_onbrush.call($$.api, x.orgDomain());
+    $$.config.subchart_onbrush.call($$.api, x.orgWebUI());
 };
 c3_chart_internal_fn.transformContext = function (withTransition, transitions) {
     var $$ = this, subXAxis;
@@ -7778,7 +7778,7 @@ c3_chart_internal_fn.transformContext = function (withTransition, transitions) {
 };
 c3_chart_internal_fn.getDefaultExtent = function () {
     var $$ = this, config = $$.config,
-        extent = isFunction(config.axis_x_extent) ? config.axis_x_extent($$.getXDomain($$.data.targets)) : config.axis_x_extent;
+        extent = isFunction(config.axis_x_extent) ? config.axis_x_extent($$.getXWebUI($$.data.targets)) : config.axis_x_extent;
     if ($$.isTimeSeries()) {
         extent = [$$.parseDate(extent[0]), $$.parseDate(extent[1])];
     }
@@ -8189,7 +8189,7 @@ c3_chart_internal_fn.initZoom = function () {
     $$.zoom = d3.behavior.zoom()
         .on("zoomstart", function () {
             startEvent = d3.event.sourceEvent;
-            $$.zoom.altDomain = d3.event.sourceEvent.altKey ? $$.x.orgDomain() : null;
+            $$.zoom.altWebUI = d3.event.sourceEvent.altKey ? $$.x.orgWebUI() : null;
             config.zoom_onzoomstart.call($$.api, d3.event.sourceEvent);
         })
         .on("zoom", function () {
@@ -8203,7 +8203,7 @@ c3_chart_internal_fn.initZoom = function () {
             }
             $$.redrawEventRect();
             $$.updateZoom();
-            config.zoom_onzoomend.call($$.api, $$.x.orgDomain());
+            config.zoom_onzoomend.call($$.api, $$.x.orgWebUI());
         });
     $$.zoom.scale = function (scale) {
         return config.axis_rotated ? this.y(scale) : this.x(scale);
@@ -8213,16 +8213,16 @@ c3_chart_internal_fn.initZoom = function () {
         return [extent[0], Math.max($$.getMaxDataCount() / extent[1], extent[1])];
     };
     $$.zoom.updateScaleExtent = function () {
-        var ratio = diffDomain($$.x.orgDomain()) / diffDomain($$.getZoomDomain()),
+        var ratio = diffWebUI($$.x.orgWebUI()) / diffWebUI($$.getZoomWebUI()),
             extent = this.orgScaleExtent();
         this.scaleExtent([extent[0] * ratio, extent[1] * ratio]);
         return this;
     };
 };
-c3_chart_internal_fn.getZoomDomain = function () {
+c3_chart_internal_fn.getZoomWebUI = function () {
     var $$ = this, config = $$.config, d3 = $$.d3,
-        min = d3.min([$$.orgXDomain[0], config.zoom_x_min]),
-        max = d3.max([$$.orgXDomain[1], config.zoom_x_max]);
+        min = d3.min([$$.orgXWebUI[0], config.zoom_x_min]),
+        max = d3.max([$$.orgXWebUI[1], config.zoom_x_max]);
     return [min, max];
 };
 c3_chart_internal_fn.updateZoom = function () {
@@ -8238,13 +8238,13 @@ c3_chart_internal_fn.redrawForZoom = function () {
     if ($$.filterTargetsToShow($$.data.targets).length === 0) {
         return;
     }
-    if (d3.event.sourceEvent.type === 'mousemove' && zoom.altDomain) {
-        x.domain(zoom.altDomain);
+    if (d3.event.sourceEvent.type === 'mousemove' && zoom.altWebUI) {
+        x.domain(zoom.altWebUI);
         zoom.scale(x).updateScaleExtent();
         return;
     }
-    if ($$.isCategorized() && x.orgDomain()[0] === $$.orgXDomain[0]) {
-        x.domain([$$.orgXDomain[0] - 1e-10, x.orgDomain()[1]]);
+    if ($$.isCategorized() && x.orgWebUI()[0] === $$.orgXWebUI[0]) {
+        x.domain([$$.orgXWebUI[0] - 1e-10, x.orgWebUI()[1]]);
     }
     $$.redraw({
         withTransition: false,
@@ -8256,7 +8256,7 @@ c3_chart_internal_fn.redrawForZoom = function () {
     if (d3.event.sourceEvent.type === 'mousemove') {
         $$.cancelClick = true;
     }
-    config.zoom_onzoom.call($$.api, x.orgDomain());
+    config.zoom_onzoom.call($$.api, x.orgWebUI());
 };
 
 return c3$1;
