@@ -1,21 +1,21 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Project.WebUI.AppCode.Extensions;
-using Project.WebUI.Business.ProfessionModule;
+using Project.WebUI.Business.DepartmentModule;
 using System.Threading.Tasks;
 
 namespace Project.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class ProfessionsController : Controller
+    public class DepartmentsController : Controller
     {
         private readonly IMediator mediator;
 
-        public ProfessionsController(IMediator mediator)
+        public DepartmentsController(IMediator mediator)
         {
             this.mediator = mediator;
         }
-        public async Task<IActionResult> Index(ProfessionPagedQuery query)
+        public async Task<IActionResult> Index(DepartmentPagedQuery query)
         {
             var response = await mediator.Send(query);
 
@@ -32,7 +32,7 @@ namespace Project.WebUI.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProfessionCreateCommand command)
+        public async Task<IActionResult> Create(DepartmentCreateCommand command)
         {
             var response = await mediator.Send(command);
             if (response == null)
@@ -43,7 +43,7 @@ namespace Project.WebUI.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
 
         }
-        public async Task<IActionResult> Details(ProfessionSingleQuery query)
+        public async Task<IActionResult> Details(DepartmentSingleQuery query)
         {
             var response = await mediator.Send(query);
 
@@ -55,21 +55,21 @@ namespace Project.WebUI.Areas.Admin.Controllers
             return View(response);
         }
 
-        public async Task<IActionResult> Edit(ProfessionSingleQuery query)
+        public async Task<IActionResult> Edit(DepartmentSingleQuery query)
         {
             var response = await mediator.Send(query);
             if (response == null)
             {
                 return NotFound();
             }
-            var command = new ProfessionEditCommand();
+            var command = new DepartmentEditCommand();
             command.Name = response.Name;
             return View(command);
 
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ProfessionEditCommand command)
+        public async Task<IActionResult> Edit(DepartmentEditCommand command)
         {
             var response = await mediator.Send(command);
             if (response == null)
@@ -81,7 +81,7 @@ namespace Project.WebUI.Areas.Admin.Controllers
 
         }
         [HttpPost]
-        public async Task<IActionResult> Remove(ProfessionRemoveCommand command)
+        public async Task<IActionResult> Remove(DepartmentRemoveCommand command)
         {
             var response = await mediator.Send(command);
 
@@ -90,7 +90,7 @@ namespace Project.WebUI.Areas.Admin.Controllers
             {
                 return Json(response);
             }
-            var newQuery = new ProfessionPagedQuery
+            var newQuery = new DepartmentPagedQuery
             {
                 PageIndex = command.PageIndex,
                 PageSize = command.PageSize

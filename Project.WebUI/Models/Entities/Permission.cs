@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Project.WebUI.Models.Entities.Membership;
+using System;
 
 namespace Project.WebUI.Models.Entities
 {
@@ -12,10 +13,9 @@ namespace Project.WebUI.Models.Entities
         public int Duration { get; set; }
         public string Reason { get; set; }
         public int DirectionId { get; set; }
-        public int RegisterAdminId { get; set; }
-        public int RegisterUserId { get; set; }
-        public virtual Register Register { get; set; }
         public virtual Direction Direction { get; set; }
+        public int ProjectUserId { get; set; }
+        public virtual ProjectUser ProjectUser { get; set; }
 
 
     }

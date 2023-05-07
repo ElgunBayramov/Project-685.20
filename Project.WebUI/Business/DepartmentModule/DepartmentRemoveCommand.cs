@@ -6,23 +6,23 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Project.WebUI.Business.RegisterModule
+namespace Project.WebUI.Business.DepartmentModule
 {
-    public class RegisterRemoveCommand : PageableModel, IRequest<JsonResponse>
+    public class DepartmentRemoveCommand : PageableModel, IRequest<JsonResponse>
     {
         public int Id { get; set; }
-        public class RegisterRemoveCommandHandler : IRequestHandler<RegisterRemoveCommand, JsonResponse>
+        public class DepartmentRemoveCommandHandler : IRequestHandler<DepartmentRemoveCommand, JsonResponse>
         {
             private readonly ProjectDbContext db;
 
-            public RegisterRemoveCommandHandler(ProjectDbContext db)
+            public DepartmentRemoveCommandHandler(ProjectDbContext db)
             {
                 this.db = db;
             }
 
-            public async Task<JsonResponse> Handle(RegisterRemoveCommand request, CancellationToken cancellationToken)
+            public async Task<JsonResponse> Handle(DepartmentRemoveCommand request, CancellationToken cancellationToken)
             {
-                var entity = await db.Registers
+                var entity = await db.Departments
                .FirstOrDefaultAsync(m => m.Id == request.Id && m.DeletedDate == null, cancellationToken);
 
 

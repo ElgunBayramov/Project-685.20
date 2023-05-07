@@ -1,23 +1,27 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Project.WebUI.AppCode.Extensions;
-using Project.WebUI.Business.ProfessionModule;
-using Project.WebUI.Business.RegisterModule;
+using Project.WebUI.Business.UserModule;
+using Project.WebUI.Models.DataContexts;
 using System.Threading.Tasks;
 
 namespace Project.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "admin")]
     public class UsersController : Controller
     {
         private readonly IMediator mediator;
+        private readonly ProjectDbContext db;
 
-        public UsersController(IMediator mediator)
+        public UsersController(IMediator mediator, ProjectDbContext db)
         {
             this.mediator = mediator;
+            this.db = db;
         }
-        public async Task<IActionResult> Index(RegisterPagedQuery query)
+
+        public async Task<IActionResult> Index(UsersPagedQuery query)
         {
             var response = await mediator.Send(query);
 
@@ -28,88 +32,31 @@ namespace Project.WebUI.Areas.Admin.Controllers
 
             return View(response);
         }
-        public async Task<IActionResult> Create()
+
+        public async Task<IActionResult> Details(UserDetailQuery query)
         {
-            var professions = await mediator.Send(new ProfessionsAllQuery());
-            ViewBag.ProfessionId = new SelectList(professions, "Id", "Name");
-            return View();
+            ViewBag.AvailableRoles = await mediator.Send(new UserAvailableRolesQuery() { UserId = query.Id });
+            ViewBag.AvailablePrincipals = await mediator.Send(new UserAvailablePrincipalsQuery() { UserId = query.Id });
+
+            var data = await mediator.Send(query);
+
+            return View(data);
         }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(RegisterCreateCommand command)
-        {
-            if (ModelState.IsValid)
-            {
-                var response = await mediator.Send(command);
-                return RedirectToAction(nameof(Index));
-            }
-            var professions = await mediator.Send(new ProfessionsAllQuery());
-            ViewBag.ProfessionId = new SelectList(professions, "Id", "Name",command.ProfessionId);
-            return View(command);
-
-        }
-        public async Task<IActionResult> Details(RegisterSingleQuery query)
-        {
-            var response = await mediator.Send(query);
-
-            if (response == null)
-            {
-                return NotFound();
-            }
-
-            return View(response);
-        }
-
-        public async Task<IActionResult> Edit(RegisterSingleQuery query)
-        {
-            var response = await mediator.Send(query);
-            if (response == null)
-            {
-                return NotFound();
-            }
-            var professions = await mediator.Send(new ProfessionsAllQuery());
-            ViewBag.ProfessionId = new SelectList(professions, "Id", "Name",response.ProfessionId);
-            var command = new RegisterEditCommand();
-            command.Name = response.Name;
-            command.Surname = response.Surname;
-            command.UserName = response.UserName;
-            command.UserPassword = response.UserPassword;
-            command.RegisterDate = response.RegisterDate;
-            return View(command);
-
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(RegisterEditCommand command)
-        {
-            var response = await mediator.Send(command);
-            if (response == null)
-            {
-                var professions = await mediator.Send(new ProfessionsAllQuery());
-                ViewBag.ProfessionId = new SelectList(professions, "Id", "Name", response.ProfessionId);
-                return View(command);
-            }
-
-            return RedirectToAction(nameof(Index));
-
-        }
-        [HttpPost]
-        public async Task<IActionResult> Remove(RegisterRemoveCommand command)
+        public async Task<IActionResult> SetRole(UserSetRoleCommand command)
         {
             var response = await mediator.Send(command);
 
+            return Json(response);
+        }
 
-            if (response.Error)
-            {
-                return Json(response);
-            }
-            var newQuery = new RegisterPagedQuery
-            {
-                PageIndex = command.PageIndex,
-                PageSize = command.PageSize
-            };
-            var data = await mediator.Send(newQuery);
-            return PartialView("_ListBody", data);
+        [HttpPost]
+        public async Task<IActionResult> SetPrincipal(UserSetPrincipalCommand command)
+        {
+            var response = await mediator.Send(command);
+
+            return Json(response);
         }
     }
 }

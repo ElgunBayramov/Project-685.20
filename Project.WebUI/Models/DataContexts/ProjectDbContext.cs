@@ -14,8 +14,6 @@ namespace Project.WebUI.Models.DataContexts
 
         }
         public DbSet<Department> Departments { get; set; }
-        public DbSet<Register> Registers { get; set; }
-        public DbSet<Status> Statuses { get; set; }
         public DbSet<Direction> Directions { get; set; }
         public DbSet<Profession> Professions { get; set; }
         public DbSet<Permission> Permissions { get; set; }

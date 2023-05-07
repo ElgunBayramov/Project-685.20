@@ -7,9 +7,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Project.WebUI.Business.RegisterModule
+namespace Project.WebUI.Business.DepartmentModule
 {
-    public class RegisterPagedQuery : PageableModel, IRequest<PagedViewModel<Register>>
+    public class DepartmentPagedQuery : PageableModel, IRequest<PagedViewModel<Department>>
     {
         public override int PageSize
         {
@@ -22,24 +22,24 @@ namespace Project.WebUI.Business.RegisterModule
             }
         }
 
-        public class RegisterPagedQueryHandler : IRequestHandler<RegisterPagedQuery, PagedViewModel<Register>>
+        public class DepartmentsPagedQueryHandler : IRequestHandler<DepartmentPagedQuery, PagedViewModel<Department>>
         {
             private readonly ProjectDbContext db;
 
-            public RegisterPagedQueryHandler(ProjectDbContext db)
+            public DepartmentsPagedQueryHandler(ProjectDbContext db)
             {
                 this.db = db;
             }
 
-            public async Task<PagedViewModel<Register>> Handle(RegisterPagedQuery request, CancellationToken cancellationToken)
+            public async Task<PagedViewModel<Department>> Handle(DepartmentPagedQuery request, CancellationToken cancellationToken)
             {
-                var query = db.Registers
-                 .Where(m => m.DeletedDate == null)
+                var query = db.Departments
+               .Where(m => m.DeletedDate == null)
                  .AsQueryable();
 
                 query = query.OrderByDescending(m => m.Id);
 
-                var data = new PagedViewModel<Register>(query, request.PageIndex, request.PageSize);
+                var data = new PagedViewModel<Department>(query, request.PageIndex, request.PageSize);
 
                 return data;
             }

@@ -1,6 +1,5 @@
-﻿@using Project.WebUI.Models.Entities.Membership
-@model PagedViewModel<ProjectUser>
-
+﻿@using Project.WebUI.Models.ViewModels
+@model PagedViewModel<Department>
 @{
     ViewData["Title"] = "Index";
 }
@@ -29,13 +28,15 @@
                         <a href="#!">Bootstrap Table</a>
                     </li>
                     <li class="breadcrumb-item" style="float: left;">
-                        <a href="#!">Users</a>
+                        <a href="#!">Basic Table</a>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
+<!-- Page-header end -->
+<!-- Page-body start -->
 <div class="page-body">
     <!-- Basic table card start -->
     <div class="card">
@@ -45,34 +46,27 @@
 
         </div>
         <div class="card-block table-border-style">
-             <div class="table-responsive" id="dynamic-body">
-             <partial name="_ListBody" model="@Model" />
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th class="operation">
+                                <a asp-action="create" class="btn btn-success">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="dynamic-body">
+                        <partial name="_ListBody" model="@Model" />
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
-<style>
-  .blog-pagination{
-  display: flex;
-  flex-direction: row;
-}
-.blog-pagination  a{
-  display: inline-block;
-  padding:10px;
-  border:1px solid #ddd;  
-  color:#fe0000;
-}
-
-.blog-pagination li.active a{
-  background-color: #fe0000;
-  color:#ffffff;
-}
-.blog-pagination li{
-  list-style:none;
-}
-</style>
-
-
+<!-- Page-body end -->
   @section addjs{ <script src="~/libs/sweetalert/sweetalert.min.js"></script>
     <script src="~/libs/toastr.js/toastr.min.js"></script>
     <script>
@@ -115,22 +109,5 @@
                     }
                 });
         }
-function goPage(page, size) {
-
-            $.ajax({
-                type: 'post',
-                data: {
-                    pageIndex: page,
-                    pageSize: size
-                },
-                success: function(response) {
-                    $('#dynamic-body').html(response);
-                },
-                error: function(resp) {
-                    console.log(resp);
-                }
-            });
-
-        }
     </script>
 }

@@ -7,22 +7,21 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Project.WebUI.Business.RegisterModule
+namespace Project.WebUI.Business.DepartmentModule
 {
-    public class RegistersAllQuery : IRequest<List<Register>>
+    public class DepartmentsAllQuery : IRequest<List<Department>>
     {
-        public class RegistersAllQueryHandler : IRequestHandler<RegistersAllQuery, List<Register>>
+        public class ProjectsAllQueryHandler : IRequestHandler<DepartmentsAllQuery, List<Department>>
         {
             private readonly ProjectDbContext db;
 
-            public RegistersAllQueryHandler(ProjectDbContext db)
+            public ProjectsAllQueryHandler(ProjectDbContext db)
             {
                 this.db = db;
             }
-            public async Task<List<Register>> Handle(RegistersAllQuery request, CancellationToken cancellationToken)
+            public async Task<List<Department>> Handle(DepartmentsAllQuery request, CancellationToken cancellationToken)
             {
-                var data = await db.Registers
-                    .Where(m => m.DeletedDate == null)
+                var data = await db.Departments.Where(m => m.DeletedDate == null)
                     .ToListAsync(cancellationToken);
 
                 return data;

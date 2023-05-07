@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Project.AppCode.Providers;
 using Project.WebUI.AppCode.Extensions;
 using Project.WebUI.AppCode.Providers;
+using Project.WebUI.AppCode.Services;
 using Project.WebUI.Models.DataContexts;
 using Project.WebUI.Models.Entities.Membership;
 using System;
@@ -46,35 +48,28 @@ namespace Project.WebUI
             services.AddScoped<UserManager<ProjectUser>>();
             services.AddScoped<SignInManager<ProjectUser>>();
             services.AddScoped<RoleManager<ProjectRole>>();
+            services.Configure<AntiforgeryOptions>(cfg =>
+            {
+                cfg.Cookie.Name = "project-ant";
+            });
+            services.Configure<CryptoServiceOptions>(cfg =>
+            {
+                configuration.GetSection("cryptography").Bind(cfg);
+            });
+            services.AddSingleton<ICryptoService, CryptoService>();
+            services.Configure<EmailServiceOptions>(cfg =>
+            {
+                configuration.GetSection("emailAccount").Bind(cfg);
+            });
+            services.AddSingleton<IEmailService, EmailService>();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddScoped<IClaimsTransformation, AppClaimProvider>();
             var assemblies = AppDomain.CurrentDomain
                .GetAssemblies()
                .Where(a => a.FullName.StartsWith("Project."))
                .ToArray();
             services.AddMediatR(assemblies);
-            services.AddAuthorization(cfg =>
-            {
 
-                foreach (string principal in AppClaimProvider.principals)
-                {
-                    cfg.AddPolicy(principal, p =>
-                    {
-                        p.RequireAssertion(handler =>
-                        {
-                            return handler.User.HasAccess(principal);
-
-                        });
-                    });
-                }
-            });
-
-
-            //services.Configure<CryptoServiceOptions>(cfg =>
-            //{
-            //    configuration.GetSection("cryptography").Bind(cfg);
-            //});
-            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            //services.AddSingleton<ICryptoService, CryptoService>();
-            services.AddScoped<IClaimsTransformation, AppClaimProvider>();
             services.AddAuthentication(cfg =>
             {
                 cfg.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -130,7 +125,7 @@ namespace Project.WebUI
                   pattern: "admin/{controller=home}/{action=index}/{id?}");
                 endpoints.MapControllerRoute(
                      name: "default",
-                     pattern: "{controller=account}/{action=signin}/{id?}");
+                     pattern: "{controller=home}/{action=index}/{id?}");
             });
         }
     }

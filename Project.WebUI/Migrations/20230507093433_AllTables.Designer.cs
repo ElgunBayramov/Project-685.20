@@ -10,7 +10,7 @@ using Project.WebUI.Models.DataContexts;
 namespace Project.WebUI.Migrations
 {
     [DbContext(typeof(ProjectDbContext))]
-    [Migration("20230505210639_AllTables")]
+    [Migration("20230507093433_AllTables")]
     partial class AllTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -131,12 +131,18 @@ namespace Project.WebUI.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FinCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -164,6 +170,12 @@ namespace Project.WebUI.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int>("ProfessionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RegisterDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -177,7 +189,12 @@ namespace Project.WebUI.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("UserPassword")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -186,6 +203,8 @@ namespace Project.WebUI.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("ProfessionId");
 
                     b.ToTable("Users", "Membership");
                 });
@@ -290,17 +309,11 @@ namespace Project.WebUI.Migrations
                     b.Property<string>("Profession")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ProjectUserId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Reason")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RegisterAdminId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RegisterId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RegisterUserId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Surname")
                         .HasColumnType("nvarchar(max)");
@@ -309,7 +322,7 @@ namespace Project.WebUI.Migrations
 
                     b.HasIndex("DirectionId");
 
-                    b.HasIndex("RegisterId");
+                    b.HasIndex("ProjectUserId");
 
                     b.ToTable("Permissions");
                 });
@@ -332,59 +345,6 @@ namespace Project.WebUI.Migrations
                     b.ToTable("Professions");
                 });
 
-            modelBuilder.Entity("Project.WebUI.Models.Entities.Register", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FinCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProfessionId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("RegisterDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Surname")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserPassword")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProfessionId");
-
-                    b.ToTable("Registers");
-                });
-
-            modelBuilder.Entity("Project.WebUI.Models.Entities.Status", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Statuses");
-                });
-
             modelBuilder.Entity("Project.WebUI.Models.Entities.Direction", b =>
                 {
                     b.HasOne("Project.WebUI.Models.Entities.Department", "Department")
@@ -403,6 +363,25 @@ namespace Project.WebUI.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Project.WebUI.Models.Entities.Membership.ProjectUser", b =>
+                {
+                    b.HasOne("Project.WebUI.Models.Entities.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Project.WebUI.Models.Entities.Profession", "Profession")
+                        .WithMany()
+                        .HasForeignKey("ProfessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Profession");
                 });
 
             modelBuilder.Entity("Project.WebUI.Models.Entities.Membership.ProjectUserClaim", b =>
@@ -455,24 +434,15 @@ namespace Project.WebUI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Project.WebUI.Models.Entities.Register", "Register")
+                    b.HasOne("Project.WebUI.Models.Entities.Membership.ProjectUser", "ProjectUser")
                         .WithMany()
-                        .HasForeignKey("RegisterId");
-
-                    b.Navigation("Direction");
-
-                    b.Navigation("Register");
-                });
-
-            modelBuilder.Entity("Project.WebUI.Models.Entities.Register", b =>
-                {
-                    b.HasOne("Project.WebUI.Models.Entities.Profession", "Profession")
-                        .WithMany()
-                        .HasForeignKey("ProfessionId")
+                        .HasForeignKey("ProjectUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Profession");
+                    b.Navigation("Direction");
+
+                    b.Navigation("ProjectUser");
                 });
 #pragma warning restore 612, 618
         }

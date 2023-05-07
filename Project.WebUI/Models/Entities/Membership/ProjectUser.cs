@@ -11,5 +11,13 @@ namespace Project.WebUI.Models.Entities.Membership
     {
         public string Name { get; set; }
         public string Surname { get; set; }
+        public string FinCode { get; set; }
+        public DateTime RegisterDate { get; set; }
+        public int? ProfessionId { get; set; }
+        public virtual Profession Profession { get; set; }
+        public int? DepartmentId { get; set; }
+        public virtual Department Department { get; set; }  
+
+
     }
 }

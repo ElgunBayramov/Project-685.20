@@ -18,13 +18,14 @@ namespace Project.WebUI.Controllers
             this.mediator = mediator;
         }
 
-
+        [Route("/signin.html")]
         public async Task<IActionResult> Signin()
         {
             return View();
         }
 
         [HttpPost]
+        [Route("/signin.html")]
         public async Task<IActionResult> Signin(SigninCommand command)
         {
             var user = await mediator.Send(command);
@@ -56,11 +57,16 @@ namespace Project.WebUI.Controllers
                 return Redirect(callbackUrl);
             }
 
-            return RedirectToAction("Index", "Home", new { area = "Admin" });
+            return RedirectToAction("Index", "Home");
 
+        }
+        [Route("/accessdenied.html")]
+        public async Task<IActionResult> AccessDenied()
+        {
+            return View();
         }
 
 
-       
+
     }
 }
