@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Project.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(Roles ="admin")]
     public class HomeController : Controller
     {
         public IActionResult Index()

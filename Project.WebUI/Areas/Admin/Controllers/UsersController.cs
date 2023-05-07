@@ -44,6 +44,7 @@ namespace Project.WebUI.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "admin.users.setrole")]
         public async Task<IActionResult> SetRole(UserSetRoleCommand command)
         {
             var response = await mediator.Send(command);
@@ -52,6 +53,7 @@ namespace Project.WebUI.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "admin.users.setprincipal")]
         public async Task<IActionResult> SetPrincipal(UserSetPrincipalCommand command)
         {
             var response = await mediator.Send(command);
