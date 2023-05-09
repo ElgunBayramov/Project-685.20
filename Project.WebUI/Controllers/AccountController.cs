@@ -57,7 +57,7 @@ namespace Project.WebUI.Controllers
                 return Redirect(callbackUrl);
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home",new {userId = user.Id});
 
         }
         [Route("/accessdenied.html")]

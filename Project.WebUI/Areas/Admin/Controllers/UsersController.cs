@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Project.WebUI.AppCode.Extensions;
 using Project.WebUI.Business.UserModule;
 using Project.WebUI.Models.DataContexts;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Project.WebUI.Areas.Admin.Controllers
@@ -39,7 +40,16 @@ namespace Project.WebUI.Areas.Admin.Controllers
             ViewBag.AvailablePrincipals = await mediator.Send(new UserAvailablePrincipalsQuery() { UserId = query.Id });
 
             var data = await mediator.Send(query);
-
+            if(data.ProfessionId != null || data.DepartmentId != null) {
+                ViewBag.professionName = db.Professions
+         .Where(p => p.Id == data.ProfessionId)
+         .Select(x => x.Name)
+         .First();
+                ViewBag.departmentName = db.Departments
+           .Where(p => p.Id == data.DepartmentId)
+           .Select(x => x.Name)
+           .First();
+            }
             return View(data);
         }
 

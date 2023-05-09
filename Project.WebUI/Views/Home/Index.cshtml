@@ -1,33 +1,36 @@
-﻿@{
+﻿@using Project.WebUI.Business.AccountModule
+@using Project.WebUI.Models.Entities.Membership
+@model ProjectUser
+@{
     ViewData["Title"] = "Index";
 }
 
-<div class="container">
-<section id="wexsi_melumat">
-    <form action="">
-        <div class="form-group">
-            <label for="ad">Ad:</label>
-            <input type="text" disabled value="rufet">
-        </div><br>
-        <div class="form-group">
-            <label for="ad">Soyad:</label>
-            <input type="text" disabled >
-        </div><Br>
-        <div class="form-group">
-            <label for="ad">FIN:</label>
-            <input type="text" disabled >
-        </div><br>
-        <div class="form-group">
-            <label for="ad">Şöbə:</label>
-            <input type="text" disabled >
-        </div><br>
-        <div class="form-group">
-            <label for="ad">Vəzifə:</label>
-            <input type="text" disabled >
-        </div>
-    </form>
-    
-</section>
+        <div class="container">
+            <section id="wexsi_melumat">
+                <form action="">
+                    <div class="form-group">
+                        <label for="ad">Ad:</label>
+                        <input type="text" disabled value="@Model.Name">
+                    </div><br>
+                    <div class="form-group">
+                        <label for="ad">Soyad:</label>
+                        <input type="text" disabled value="@Model.Surname">
+                    </div><Br>
+                    <div class="form-group">
+                        <label for="ad">FIN:</label>
+                        <input type="text" disabled value="@Model.FinCode">
+                    </div><br>
+                    <div class="form-group">
+                        <label for="ad">Şöbə:</label>
+                        <input type="text" disabled value="@ViewBag.departmentName">
+                    </div><br>
+                    <div class="form-group">
+                        <label for="ad">Vəzifə:</label>
+                        <input type="text" disabled value="@ViewBag.professionName">
+                    </div>
+                </form>
 
-</div>
-  <partial name="_Pickup"/>
+            </section>
+
+        </div>
+        <partial name="_Pickup" />
