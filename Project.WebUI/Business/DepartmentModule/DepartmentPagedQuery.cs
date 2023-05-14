@@ -22,11 +22,11 @@ namespace Project.WebUI.Business.DepartmentModule
             }
         }
 
-        public class DepartmentsPagedQueryHandler : IRequestHandler<DepartmentPagedQuery, PagedViewModel<Department>>
+        public class DepartmentPagedQueryHandler : IRequestHandler<DepartmentPagedQuery, PagedViewModel<Department>>
         {
             private readonly ProjectDbContext db;
 
-            public DepartmentsPagedQueryHandler(ProjectDbContext db)
+            public DepartmentPagedQueryHandler(ProjectDbContext db)
             {
                 this.db = db;
             }

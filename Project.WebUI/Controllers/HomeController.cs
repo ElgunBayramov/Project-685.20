@@ -13,6 +13,9 @@ using System.Security.Claims;
 using Project.WebUI.Business.ProfessionModule;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Project.WebUI.Business.DepartmentModule;
+using Project.WebUI.Business.PermissionModule;
+using Project.WebUI.Models.Entities;
+using System.Collections.Generic;
 
 namespace Project.WebUI.Controllers
 {
@@ -37,7 +40,7 @@ namespace Project.WebUI.Controllers
             {
                 string userId = currentUser.FindFirstValue(ClaimTypes.NameIdentifier);
                 int.TryParse(userId, out int UserId);
-               user = _dbContext.Users.Find(UserId);
+                user = _dbContext.Users.Find(UserId);
             }
             ViewBag.professionName = _dbContext.Professions
        .Where(p => p.Id == user.ProfessionId)
@@ -49,32 +52,62 @@ namespace Project.WebUI.Controllers
        .First();
 
             return View(user);
-
-
-            //var model = new MultiHomeCommand
-            //{
-            //    User = new ProjectUser(),
-            //    UserIsNullDescription = string.Empty,
-            //};
-
-
-            //if (userId != 0)
-            //    model.User = _dbContext.Users
-            //.Where(u => u.Id == userId)
-            //.First();
-
-            //if (userId == 0)
-
-            //    model.UserIsNullDescription = "user is null";
-
-
-            //    return View(model);
         }
-        [Route("/about")]
-        public IActionResult About()
+
+        [HttpPost]
+        public async Task<IActionResult> Index(PermissionMultiModel model)
         {
-            return View();
+            var currentUser = User;
+            var user = new ProjectUser();
+
+            if (currentUser.Identity.IsAuthenticated)
+            {
+                string userId = currentUser.FindFirstValue(ClaimTypes.NameIdentifier);
+                int.TryParse(userId, out int UserId);
+                user = _dbContext.Users.Find(UserId);
+            }
+
+            model.CreateCommand.ProjectUserId = user.Id;
+            //model.CreateCommand.Id=
+
+            var response = await mediator.Send(model.CreateCommand);
+            //_dbContext.Permissions.Add(response);
+            //_dbContext.SaveChanges();
+
+            return RedirectToAction("About");
         }
 
+        [Route("/about")]
+        public async Task<IActionResult> About()
+        {
+            var currentUser = User;
+            var user = new ProjectUser();
+
+            if (currentUser.Identity.IsAuthenticated)
+            {
+                string userId = currentUser.FindFirstValue(ClaimTypes.NameIdentifier);
+                int.TryParse(userId, out int UserId);
+                user = _dbContext.Users.Find(UserId);
+            }
+
+            var permissions = _dbContext.Permissions
+                .Where(p => p.ProjectUserId == user.Id)
+                .ToList();
+            var permissionMulti = new PermissionMultiModel
+            {
+                Permission = permissions,
+                CreateCommand = new PermissionCreateCommand()
+            };
+            return View(permissionMulti);
+        }
+
+
+        //[HttpPost]
+        //public IActionResult About(PermissionCreateCommand command)
+        //{
+        //    //var response = await mediator.Send(command);
+
+        //    return RedirectToAction("About");
+        //}
     }
 }

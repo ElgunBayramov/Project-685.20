@@ -50,14 +50,23 @@ namespace Project.WebUI.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(principal), props);
 
+            // usere
+            //if (User.IsInRole("Admin"))
+            //{
+            //    return RedirectToAction("Index", "Home", new { userId = user.Id });
+            //}
+
             var callbackUrl = Request.Query["ReturnUrl"].ToString();
 
             if (!string.IsNullOrWhiteSpace(callbackUrl))
             {
                 return Redirect(callbackUrl);
             }
-
-            return RedirectToAction("Index", "Home",new {userId = user.Id});
+            if (User.IsInRole("admin"))
+            {
+                return RedirectToAction("Index", "Home", new { area="Admin" });
+            }
+            return RedirectToAction("Index", "Home");
 
         }
         [Route("/accessdenied.html")]
@@ -65,8 +74,22 @@ namespace Project.WebUI.Controllers
         {
             return View();
         }
+        [Route("/signout.html")]
+        public async Task<IActionResult> Signout(SignoutCommand command)
+        {
+            await mediator.Send(command);
+
+            var callback = Request.Headers["Referer"];
+
+            if (!string.IsNullOrWhiteSpace(callback))
+            {
+                return Redirect(callback);
+            }
 
 
+            return RedirectToAction("Index", "Home");
 
-    }
+
+        }
+        }
 }

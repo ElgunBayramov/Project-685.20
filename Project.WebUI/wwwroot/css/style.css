@@ -23,7 +23,7 @@ body {
     justify-content: space-between;
     gap: 20px;
     padding: 5.5rem;
-     background-image: url('../images/image.jpg'); 
+     /*background-image: url('../images/image.jpg');*/ 
      /*background-color: #0000000b; */
     background-size: cover;
     background-position: center;

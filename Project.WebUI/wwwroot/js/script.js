@@ -1,13 +1,11 @@
-﻿let themeColor = document.querySelectorAll('.theme-toggler span');
+﻿const { image } = require("d3-fetch");
 
-themeColor.forEach(color => color.addEventListener('click', () => {
-    let background = color.style.background;
-    document.querySelector('body').style.background = background;
-}));
-let icon = document.querySelector(".picture");
-icon.addEventListener("click", function () {
-    body.innerHTML = '<img src="image.jpg" alt="">'
-})
+//let themeColor = document.querySelectorAll('.theme-toggler span');
+
+//themeColor.forEach(color => color.addEventListener('click', () => {
+//    let background = color.style.background;
+//    document.querySelector('body').style.background = background;
+//}));
 const search = document.querySelector('.input-group input'),
     table_rows = document.querySelectorAll('tbody tr'),
     table_headings = document.querySelectorAll('thead th');

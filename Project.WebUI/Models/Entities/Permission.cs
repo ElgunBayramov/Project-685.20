@@ -10,13 +10,12 @@ namespace Project.WebUI.Models.Entities
         public string Surname { get; set; }
         public string Profession { get; set; }
         public DateTime? Date { get; set; }
-        public int Duration { get; set; }
+        public DateTime? DeletedDate { get; set; }
+        public string Duration { get; set; }
         public string Reason { get; set; }
-        public int DirectionId { get; set; }
+        public int? DirectionId { get; set; }
         public virtual Direction Direction { get; set; }
         public int ProjectUserId { get; set; }
         public virtual ProjectUser ProjectUser { get; set; }
-
-
     }
 }

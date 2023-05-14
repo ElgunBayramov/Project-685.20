@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Project.WebUI.AppCode.Extensions
 {

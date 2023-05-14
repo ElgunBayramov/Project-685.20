@@ -1,6 +1,18 @@
 ﻿@using Project.WebUI.Models.ViewModels
 @model PagedViewModel<Profession>
 
+    <table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th class="operation">
+                <a asp-action="create" class="btn btn-success">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
 @foreach (var item in Model.Items)
 {
     <tr>
@@ -18,3 +30,7 @@
         </td>
     </tr>
 }
+</tbody>
+</table>
+
+@Model.GetPager(Url,"Index",area:"admin",paginateFunction:"goPage")

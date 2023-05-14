@@ -7,9 +7,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Project.WebUI.Business.ProfessionModule
+namespace Project.WebUI.Business.PermissionModule
 {
-    public class ProfessionPagedQuery : PageableModel, IRequest<PagedViewModel<Profession>>
+    public class PermissionPagedQuery : PageableModel, IRequest<PagedViewModel<Permission>>
     {
         public override int PageSize
         {
@@ -22,24 +22,24 @@ namespace Project.WebUI.Business.ProfessionModule
             }
         }
 
-        public class ProfessionPagedQueryHandler : IRequestHandler<ProfessionPagedQuery, PagedViewModel<Profession>>
+        public class PermissionPagedQueryHandler : IRequestHandler<PermissionPagedQuery, PagedViewModel<Permission>>
         {
             private readonly ProjectDbContext db;
 
-            public ProfessionPagedQueryHandler(ProjectDbContext db)
+            public PermissionPagedQueryHandler(ProjectDbContext db)
             {
                 this.db = db;
             }
 
-            public async Task<PagedViewModel<Profession>> Handle(ProfessionPagedQuery request, CancellationToken cancellationToken)
+            public async Task<PagedViewModel<Permission>> Handle(PermissionPagedQuery request, CancellationToken cancellationToken)
             {
-                var query = db.Professions
-               .Where(m => m.DeletedDate == null)
+                var query = db.Permissions
+                 .Where(m => m.DeletedDate == null)
                  .AsQueryable();
 
                 query = query.OrderByDescending(m => m.Id);
 
-                var data = new PagedViewModel<Profession>(query, request.PageIndex, request.PageSize);
+                var data = new PagedViewModel<Permission>(query, request.PageIndex, request.PageSize);
 
                 return data;
             }
