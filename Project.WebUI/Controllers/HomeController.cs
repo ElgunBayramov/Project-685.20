@@ -19,8 +19,8 @@ using System.Collections.Generic;
 
 namespace Project.WebUI.Controllers
 {
-    [Authorize(Roles = "user")]
     public class HomeController : Controller
+
     {
         private readonly ProjectDbContext _dbContext;
         private readonly IMediator mediator;
@@ -30,7 +30,7 @@ namespace Project.WebUI.Controllers
             this.mediator = mediator;
             _dbContext = dbContext;
         }
-
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Index()
         {
             ClaimsPrincipal currentUser = User;
@@ -55,6 +55,7 @@ namespace Project.WebUI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> Index(PermissionMultiModel model)
         {
             var currentUser = User;
@@ -68,16 +69,13 @@ namespace Project.WebUI.Controllers
             }
 
             model.CreateCommand.ProjectUserId = user.Id;
-            //model.CreateCommand.Id=
-
             var response = await mediator.Send(model.CreateCommand);
-            //_dbContext.Permissions.Add(response);
-            //_dbContext.SaveChanges();
 
             return RedirectToAction("About");
         }
 
         [Route("/about")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> About()
         {
             var currentUser = User;
@@ -100,7 +98,12 @@ namespace Project.WebUI.Controllers
             };
             return View(permissionMulti);
         }
-
+        //[Authorize(Roles = "muhafize")]
+        //public async Task<IActionResult> Watch(PermissionsAllQuery query)
+        //{
+        //    var response = await mediator.Send(query);
+        //    return View(response);
+        //} 
 
         //[HttpPost]
         //public IActionResult About(PermissionCreateCommand command)

@@ -13,6 +13,7 @@ namespace Project.WebUI.Business.PermissionModule
         public string Surname { get; set; }
         public string Profession { get; set; }
         public DateTime? Date { get; set; } = DateTime.Now;
+        public int Status { get; set; }
         public string Duration { get; set; }
         public string Reason { get; set; }
         public int ProjectUserId { get; set; }
@@ -36,6 +37,7 @@ namespace Project.WebUI.Business.PermissionModule
                     Duration = request.Duration,
                     Reason = request.Reason,
                     ProjectUserId = request.ProjectUserId,
+                    Status = (Status)request.Status,
                 };
 
                 await db.Permissions.AddAsync(permission, cancellationToken);

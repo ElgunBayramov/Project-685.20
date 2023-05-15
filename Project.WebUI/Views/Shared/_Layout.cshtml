@@ -6,8 +6,48 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
     <link rel="stylesheet" href="~/css/style.css">
     <link rel="icon" type="image/png" href="https://seeklogo.com/images/T/the-project-logo-6082FFB8D5-seeklogo.com.png" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:400">
     <title>Layihə-685.20</title>
+    <script src="https://kit.fontawesome.com/dbccfca02d.js" crossorigin="anonymous"></script>
     <style>
+
+.logout {
+  font-size: .8em;
+  font-family: 'Oswald', sans-serif;
+	position: relative;
+  right: -10px;
+  overflow: hidden;
+  letter-spacing: 2px;
+  opacity: 0;
+  transition: opacity .45s;
+  -webkit-transition: opacity .35s;
+  
+}
+
+.button {
+    display:flex;
+	text-decoration: none;
+	float: right;
+  padding: 12px;
+  color: white;
+  width: 48px;
+  background-color: inherit;
+  transition: width .35s;
+  -webkit-transition: width .35s;
+  overflow: hidden
+}
+
+.button:hover {
+  width: 100px;
+}
+
+.button:hover .logout{
+  opacity: .9;
+}
+
+.button {
+  text-decoration: none;
+}
 
         body {
             background: linear-gradient(-135deg, #c850c0, #4158d0);
@@ -218,6 +258,16 @@
 </head>
 <body>
     <partial name="_Loader" />
+   <div class="navigation">
+  
+	<a class="button" asp-controller="Account" asp-action="Signout">
+  	<i style="font-size:20px;" class="fa fa-arrow-right-from-bracket"></i>
+  
+  <div class="logout">LOGOUT</div>
+
+	</a>
+  
+</div>
     <header>
         <div class="user">
             <img src="~/images/Profile-Icon.png" alt="">

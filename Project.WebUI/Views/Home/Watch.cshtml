@@ -1,0 +1,33 @@
+﻿@using Project.WebUI.Models.Entities
+@model List<Permission>
+@{
+    ViewData["Title"] = "Watch";
+}
+@*
+ <section class="table__body">
+        <table id="content-table">
+            <thead>
+                <tr>
+                    <th> Ad <span onclick="sortTable(1)" class="icon-arrow">&UpArrow;</span></th>
+                    <th> Soyad <span onclick="sortTable(2)" class="icon-arrow">&UpArrow;</span></th>
+                    <th> Tarix <span onclick="sortTable(3)" class="icon-arrow">&UpArrow;</span></th>
+                    <th> İcazə <span onclick="sortTable(4)" class="icon-arrow">&UpArrow;</span></th>
+                    <th> Vaxt <span onclick="sortTable(5)" class="icon-arrow">&UpArrow;</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var userPermission in Model)
+                {
+                    <tr>
+                        <td>@userPermission.Name</td>
+                        <td> @userPermission.Surname </td>
+                        <td> @userPermission.Date</td>
+                        <td>
+                            <p class="status delivered">Gözlənilir</p>
+                        </td>
+                        <td> <strong> @userPermission.Duration </strong></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>*@

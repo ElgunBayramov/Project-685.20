@@ -1,7 +1,7 @@
 ﻿@using Project.WebUI.Models.ViewModels
 @model PagedViewModel<Permission>
 
-    <table class="table">
+<table class="table">
     <thead>
         <tr>
             <th>Name</th>
@@ -13,24 +13,24 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Items)
-{
-    <tr>
-        <td>@item.Name</td>
-        <td class="operation">
-            <a asp-route-id="@item.Id" class="btn btn-warning" id="add">
-               <i class="fa fa-check"></i>
-            </a>
-            <a asp-action="details" asp-route-id="@item.Id" class="btn btn-secondary">
-                <i class="fa fa-eye"></i>
-            </a>
-            <a onclick="removeEntity(event,@item.Id,'@item.Name')" class="btn btn-danger">
-                <i class="fa fa-x"></i>
-            </a>
-        </td>
-    </tr>
-}
-</tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td class="operation">
+                    <a asp-controller="Permissions" asp-action="Index" asp-route-UserId="@item.Id" class="btn btn-warning" id="add">
+                        <i class="fa fa-check"></i>
+                    </a>
+                    <a asp-action="details" asp-route-id="@item.Id" class="btn btn-secondary">
+                        <i class="fa fa-eye"></i>
+                    </a>
+                    <a onclick="removeEntity(event,@item.Id,'@item.Name')" class="btn btn-danger">
+                        <i class="fa fa-x"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
 
 @Model.GetPager(Url,"Index",area:"admin",paginateFunction:"goPage")

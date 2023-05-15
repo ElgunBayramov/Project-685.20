@@ -1,8 +1,13 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Project.WebUI.AppCode.Extensions;
 using Project.WebUI.Business.PermissionModule;
+using Project.WebUI.Models.DataContexts;
+using Project.WebUI.Models.Entities;
+using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Project.WebUI.Areas.Admin.Controllers
 {
@@ -10,10 +15,13 @@ namespace Project.WebUI.Areas.Admin.Controllers
     public class PermissionsController : Controller
     {
         private readonly IMediator mediator;
-        public PermissionsController(IMediator mediator)
+        private readonly ProjectDbContext dbContext;
+        public PermissionsController(IMediator mediator, ProjectDbContext dbContext)
         {
             this.mediator = mediator;
+            this.dbContext = dbContext;
         }
+        [HttpGet]
         public async Task<IActionResult> Index(PermissionPagedQuery query)
         {
             var response = await mediator.Send(query);
@@ -38,10 +46,22 @@ namespace Project.WebUI.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> Index(int UserId)  
+        {
+            var user = dbContext.Permissions
+                .Where(u => u.Id == UserId).FirstOrDefault();
+
+            user.Status = Status.TesdiqOldu;
+            dbContext.SaveChanges();
+
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Remove(PermissionRemoveCommand command)
         {
             var response = await mediator.Send(command);
-
 
             if (response.Error)
             {
