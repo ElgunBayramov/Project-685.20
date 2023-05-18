@@ -43,7 +43,7 @@ namespace Project.WebUI.Areas.Admin.Controllers
             ViewBag.DepartmentId = new SelectList(departments, "Id", "Name");
 
             TempData["Message"] = $"{command.Email} - E-poct`a gonderilen linkle qeydiyyati tamamlayin";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Users");
         }
 
 

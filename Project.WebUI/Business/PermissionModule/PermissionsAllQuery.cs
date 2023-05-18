@@ -21,7 +21,7 @@ namespace Project.WebUI.Business.PermissionModule
             }
             public async Task<List<Permission>> Handle(PermissionsAllQuery request, CancellationToken cancellationToken)
             {
-                var data = await db.Permissions.Where(m => m.DeletedDate == null)
+                var data = await db.Permissions
                     .ToListAsync(cancellationToken);
 
                 return data;

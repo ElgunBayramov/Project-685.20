@@ -122,7 +122,7 @@ namespace Project.WebUI
             {
                 endpoints.MapAreaControllerRoute(name: "defaultAdmin",
                   areaName: "Admin",
-                  pattern: "admin/{controller=home}/{action=index}/{id?}");
+                  pattern: "admin/{controller=users}/{action=index}/{id?}");
                 endpoints.MapControllerRoute(
                      name: "default",
                      pattern: "{controller=home}/{action=index}/{id?}");

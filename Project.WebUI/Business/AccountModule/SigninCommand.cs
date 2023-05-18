@@ -43,7 +43,7 @@ namespace Project.WebUI.Business.AccountModule
 
                 if (user == null)
                 {
-                    ctx.ActionContext.ModelState.AddModelError("UserName", "Istifadeci adi ve ya sifre sehvdir");
+                    ctx.ActionContext.ModelState.AddModelError("UserName", "Istifadəçi adı və ya şifrə səhvdir");
 
                     return null;
                 }
@@ -53,7 +53,7 @@ namespace Project.WebUI.Business.AccountModule
 
                 if (result.IsLockedOut)
                 {
-                    ctx.ActionContext.ModelState.AddModelError("UserName", "Hesabibiz kecici olaraq mehdudlashdirilib");
+                    ctx.ActionContext.ModelState.AddModelError("UserName", "Hesabınız keçici olaraq məhdudlaşdırılıb");
 
                     return null;
                 }
@@ -61,7 +61,7 @@ namespace Project.WebUI.Business.AccountModule
 
                 if (result.IsNotAllowed)
                 {
-                    ctx.ActionContext.ModelState.AddModelError("UserName", "Hesaba daxil olmaq mumkun deyil");
+                    ctx.ActionContext.ModelState.AddModelError("UserName", "Hesaba daxil olmaq mümkün deyil");
 
                     return null;
                 }
@@ -70,7 +70,7 @@ namespace Project.WebUI.Business.AccountModule
 
                 if (!user.EmailConfirmed)
                 {
-                    ctx.ActionContext.ModelState.AddModelError("UserName", "Hesabiniz tesdiq edilmeyib");
+                    ctx.ActionContext.ModelState.AddModelError("UserName", "Hesabınız təsdiq edilməyib");
 
                     return null;
                 }
@@ -81,7 +81,7 @@ namespace Project.WebUI.Business.AccountModule
                     return user;
                 }
 
-                ctx.ActionContext.ModelState.AddModelError("UserName", "Istifadeci adi ve ya sifre sehvdir");
+                ctx.ActionContext.ModelState.AddModelError("UserName", "Istifadəçi adı və ya şifrə səhvdir");
                 return null;
             }
         }

@@ -13,9 +13,9 @@ namespace Project.WebUI.Business.PermissionModule
         public string Surname { get; set; }
         public string Profession { get; set; }
         public DateTime? Date { get; set; } = DateTime.Now;
-        public int Status { get; set; }
         public string Duration { get; set; }
         public string Reason { get; set; }
+        public Status Status { get; set; }
         public int ProjectUserId { get; set; }
         public class PermissionCreateCommandHandler : IRequestHandler<PermissionCreateCommand, Permission>
         {
@@ -30,14 +30,13 @@ namespace Project.WebUI.Business.PermissionModule
             {
                 var permission = new Permission()
                 {
-                    Name = request.Name,
+                    Name=request.Name,
                     Surname = request.Surname,
                     Profession = request.Profession,
                     Date = request.Date,
                     Duration = request.Duration,
                     Reason = request.Reason,
                     ProjectUserId = request.ProjectUserId,
-                    Status = (Status)request.Status,
                 };
 
                 await db.Permissions.AddAsync(permission, cancellationToken);

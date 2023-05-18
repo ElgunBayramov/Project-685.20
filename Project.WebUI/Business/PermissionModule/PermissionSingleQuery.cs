@@ -29,7 +29,7 @@ namespace Project.WebUI.Business.PermissionModule
                 var user =  db.Permissions
                     .Where(u => u.Id == UserId).First();
 
-                user.Status = Status.TesdiqOldu;
+                user.Status = Status.İcazəVerildi;
                 db.SaveChanges();
             }
         }

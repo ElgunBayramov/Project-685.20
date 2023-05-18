@@ -34,21 +34,21 @@
                         @{
                             switch (userPermission.Status)
                             {
-                                case Status.Gozlenilir:
+                                case Status.Gözlənilir:
                                     {
                                         <td>
                                             <p class="status pending">@userPermission.Status</p>
                                         </td>
                                         break;
                                     }
-                                case Status.LegvOLdu:
+                                case Status.İcazəVerilməyib:
                                     {
                                         <td>
                                             <p class="status cancelled">@userPermission.Status</p>
                                         </td>
                                         break;
                                     }
-                                case Status.TesdiqOldu:
+                                case Status.İcazəVerildi:
                                     {
                                         <td>
                                             <p class="status delivered">@userPermission.Status</p>

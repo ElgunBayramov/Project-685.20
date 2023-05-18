@@ -2,8 +2,8 @@
 {
     public enum Status
     {
-        Gozlenilir = 1,
-        LegvOLdu,
-        TesdiqOldu
+        Gözlənilir = 1,
+        İcazəVerilməyib,
+        İcazəVerildi
     }
 }

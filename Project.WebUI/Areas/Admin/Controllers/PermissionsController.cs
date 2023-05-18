@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Project.WebUI.AppCode.Extensions;
 using Project.WebUI.Business.PermissionModule;
 using Project.WebUI.Models.DataContexts;
 using Project.WebUI.Models.Entities;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Project.WebUI.Areas.Admin.Controllers
 {
@@ -45,18 +44,40 @@ namespace Project.WebUI.Areas.Admin.Controllers
             return View(response);
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> Index(int UserId)  
+        public IActionResult UpdateStatus(int UserId, string AdditionalParam)
         {
-            var user = dbContext.Permissions
-                .Where(u => u.Id == UserId).FirstOrDefault();
+            var user = dbContext.Permissions.FirstOrDefault(u => u.Id == UserId);
 
-            user.Status = Status.TesdiqOldu;
-            dbContext.SaveChanges();
+            if (user != null)
+            {
+                switch (AdditionalParam)
+                {
+                    case "Accept":
+                        {
+                            user.Status = Status.İcazəVerildi;
+                            break;
+                        }
+                    case "Refuse":
+                        {
+                            user.Status = Status.İcazəVerilməyib;
+                            user.DeletedDate = DateTime.Now;
+                            break;
+                        }
+                    default:
+                        break;
+                }
 
-
-            return RedirectToAction("Index");
+                dbContext.SaveChanges();
+                return Ok("Status updated successfully");
+            }
+            else
+            {
+                return NotFound("User not found");
+            }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Remove(PermissionRemoveCommand command)

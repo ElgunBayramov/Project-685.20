@@ -50,11 +50,6 @@ namespace Project.WebUI.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(principal), props);
 
-            // usere
-            //if (User.IsInRole("Admin"))
-            //{
-            //    return RedirectToAction("Index", "Home", new { userId = user.Id });
-            //}
 
             var callbackUrl = Request.Query["ReturnUrl"].ToString();
 
@@ -62,10 +57,7 @@ namespace Project.WebUI.Controllers
             {
                 return Redirect(callbackUrl);
             }
-            if (User.IsInRole("admin"))
-            {
-                return RedirectToAction("Index", "Home", new { area="Admin" });
-            }
+            
             return RedirectToAction("Index", "Home");
 
         }
@@ -79,17 +71,15 @@ namespace Project.WebUI.Controllers
         {
             await mediator.Send(command);
 
-            var callback = Request.Headers["Referer"];
+            //var callback = Request.Headers["Referer"];
 
-            if (!string.IsNullOrWhiteSpace(callback))
-            {
-                return Redirect(callback);
-            }
+            //if (!string.IsNullOrWhiteSpace(callback))
+            //{
+            //    return Redirect(callback);
+            //}
 
 
             return RedirectToAction("Index", "Home");
-
-
         }
-        }
+    }
 }

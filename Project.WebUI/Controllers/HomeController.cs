@@ -1,21 +1,13 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Project.WebUI.Business.AccountModule;
+using Project.WebUI.Business.PermissionModule;
 using Project.WebUI.Models.DataContexts;
+using Project.WebUI.Models.Entities;
 using Project.WebUI.Models.Entities.Membership;
 using System.Linq;
-using System.Security.Principal;
-using System.Threading.Tasks;
-using Project.WebUI.AppCode.Extensions;
 using System.Security.Claims;
-using Project.WebUI.Business.ProfessionModule;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Project.WebUI.Business.DepartmentModule;
-using Project.WebUI.Business.PermissionModule;
-using Project.WebUI.Models.Entities;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Project.WebUI.Controllers
 {
@@ -30,7 +22,7 @@ namespace Project.WebUI.Controllers
             this.mediator = mediator;
             _dbContext = dbContext;
         }
-        [Authorize(Roles = "user")]
+        [Authorize(Roles = "user,muhafize")]
         public async Task<IActionResult> Index()
         {
             ClaimsPrincipal currentUser = User;
@@ -42,6 +34,15 @@ namespace Project.WebUI.Controllers
                 int.TryParse(userId, out int UserId);
                 user = _dbContext.Users.Find(UserId);
             }
+
+            var role = _dbContext.UserRoles
+                .Where(y => y.UserId == user.Id)
+                .Select(r => r.RoleId).FirstOrDefault();
+
+            if (role == 2)
+                return RedirectToAction("Watch");
+
+
             ViewBag.professionName = _dbContext.Professions
        .Where(p => p.Id == user.ProfessionId)
        .Select(x => x.Name)
@@ -69,6 +70,7 @@ namespace Project.WebUI.Controllers
             }
 
             model.CreateCommand.ProjectUserId = user.Id;
+            model.CreateCommand.Status = Status.Gözlənilir;
             var response = await mediator.Send(model.CreateCommand);
 
             return RedirectToAction("About");
@@ -98,19 +100,12 @@ namespace Project.WebUI.Controllers
             };
             return View(permissionMulti);
         }
-        //[Authorize(Roles = "muhafize")]
-        //public async Task<IActionResult> Watch(PermissionsAllQuery query)
-        //{
-        //    var response = await mediator.Send(query);
-        //    return View(response);
-        //} 
+        [Authorize(Roles = "muhafize")]
+        public async Task<IActionResult> Watch(PermissionsAllQuery query)
+        {
+            var response = await mediator.Send(query);
 
-        //[HttpPost]
-        //public IActionResult About(PermissionCreateCommand command)
-        //{
-        //    //var response = await mediator.Send(command);
-
-        //    return RedirectToAction("About");
-        //}
+            return View(response);
+        }
     }
 }
