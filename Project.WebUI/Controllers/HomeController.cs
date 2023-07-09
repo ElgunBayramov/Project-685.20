@@ -91,7 +91,7 @@ namespace Project.WebUI.Controllers
             }
 
             var permissions = _dbContext.Permissions
-                .Where(p => p.ProjectUserId == user.Id)
+                .Where(p => p.ProjectUserId == user.Id && p.DeletedDate==null)
                 .ToList();
             var permissionMulti = new PermissionMultiModel
             {

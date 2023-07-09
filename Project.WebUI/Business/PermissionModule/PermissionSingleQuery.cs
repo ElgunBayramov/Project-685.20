@@ -27,7 +27,7 @@ namespace Project.WebUI.Business.PermissionModule
             public async void Accept(int UserId)
             {
                 var user =  db.Permissions
-                    .Where(u => u.Id == UserId).First();
+                    .First();
 
                 user.Status = Status.İcazəVerildi;
                 db.SaveChanges();

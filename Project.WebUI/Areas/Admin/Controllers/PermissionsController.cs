@@ -62,7 +62,6 @@ namespace Project.WebUI.Areas.Admin.Controllers
                     case "Refuse":
                         {
                             user.Status = Status.İcazəVerilməyib;
-                            user.DeletedDate = DateTime.Now;
                             break;
                         }
                     default:
