@@ -23,7 +23,7 @@ namespace Project.WebUI.Business.PermissionModule
             public async Task<JsonResponse> Handle(PermissionRemoveCommand request, CancellationToken cancellationToken)
             {
                 var entity = await db.Permissions
-               .FirstOrDefaultAsync(m => m.Id == request.Id && m.DeletedDate == null, cancellationToken);
+               .FirstOrDefaultAsync(m => m.Id == request.Id , cancellationToken);
 
 
                 if (entity == null)
